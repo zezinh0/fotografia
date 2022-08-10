@@ -78,10 +78,10 @@ export default function CreateProject() {
 
   const onSubmit = async () => {
     console.log('Entrei');
-    dispatch({ type: 'FETCH_REQUEST' });
-
+    //dispatch({ type: 'FETCH_REQUEST' });
+    console.log('FETCH_REQUEST');
     var grupo = new FormData();
-    let formData = new FormData();
+
     grupo.append('nome', grupo_name);
     let tam = '';
     tamanhos.forEach((tamanho) => {
@@ -97,30 +97,29 @@ export default function CreateProject() {
         ',';
     });
     grupo.append('tamanho', tam);
-    if (files.length > 0) {
-      files.forEach((file) => {
-        formData.append('file', file);
-      });
-    }
     grupo.append('codigo', codigo);
-    grupo.append('enabled', enabled);
+    grupo.append('enabled', true);
 
     try {
       const res = await axios.post(`/api/grupos/create/${user_id}`, grupo);
 
       if (files.length > 0) {
-        formData.append('grupo', res.data._id);
-        await axios.post('/api/imagens/upload', formData);
-        console.log('Fotoss criadas');
-        // Clear percentage
+        files.forEach(async (file) => {
+          var formData = new FormData();
+          formData.append('grupo', res.data._id);
+          formData.append('file', file);
+          await axios.post('/api/imagens/upload', formData);
+        });
       }
 
+      // Clear percentage
       console.log('File Uploaded');
-      dispatch({ type: 'FETCH_SUCCESS' });
+      console.log('FETCH_SUCCESS');
     } catch (error) {
-      dispatch({ type: 'FETCH_FAIL', payload: error.message });
+      console.log('FETCH_FAIL');
+      //dispatch({ type: 'FETCH_FAIL', payload: error.message });
     }
-    navigate('/project');
+    //navigate('/project');
   };
 
   const Tamanhos = () => {
@@ -192,7 +191,7 @@ export default function CreateProject() {
                 />
               </div>
             </div>
-
+            {/* ´
             <div className="sm:col-span-6">
               <label
                 htmlFor="username"
@@ -258,6 +257,7 @@ export default function CreateProject() {
                 </span>
               </Switch>
             </div>
+            */}
 
             <div className="sm:col-span-6">
               <h3 className="text-md leading-6 font-medium text-gray-900">

@@ -23,7 +23,7 @@ const reducer = (state, action) => {
 export default function Project() {
   const user_id = '62ddf3fd1c19bc83e0778fbe';
 
-  const [{ loading, error, eventos }, dispatch] = useReducer(logger(reducer), {
+  const [{ loading, error, eventos }, dispatch] = useReducer(reducer, {
     loading: false,
     error: '',
     eventos: [],

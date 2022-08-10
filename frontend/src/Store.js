@@ -11,6 +11,9 @@ const initialState = {
     grupo: localStorage.getItem('grupo')
       ? JSON.parse(localStorage.getItem('grupo'))
       : '',
+    metodo: localStorage.getItem('metodo')
+      ? JSON.parse(localStorage.getItem('metodo'))
+      : '',
   },
 };
 
@@ -50,6 +53,15 @@ function reducer(state, action) {
           grupo: action.payload,
         },
       };
+    case 'METODO_ADD':
+      localStorage.setItem('metodo', JSON.stringify(action.payload));
+      return {
+        ...state,
+        cart: {
+          ...state.cart,
+          metodo: action.payload,
+        },
+      };
     case 'CART_REMOVE_ITEM':
       const cartItemss = state.cart.cartItems.filter(
         (item) =>
@@ -58,6 +70,7 @@ function reducer(state, action) {
       );
       localStorage.setItem('cartImages', JSON.stringify(cartItemss));
       return { ...state, cart: { ...state.cart, cartItems: cartItemss } };
+
     default:
       return state;
   }

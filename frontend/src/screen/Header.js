@@ -1,5 +1,7 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import { Dialog, Popover, Tab, Transition } from '@headlessui/react';
+import { CheckCircleIcon, TrashIcon } from '@heroicons/react/solid';
+import { RadioGroup } from '@headlessui/react';
 import {
   MenuIcon,
   SearchIcon,
@@ -314,16 +316,48 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
+const deliveryMethods = [
+  {
+    id: 1,
+    title: 'Fotos Digitais',
+    //turnaround: '4–10 business days',
+    price: 0,
+  },
+  {
+    id: 2,
+    title: 'Album',
+    //turnaround: '2–5 business days',
+    price: 20,
+  },
+  {
+    id: 3,
+    title: 'Fotos Digitais e Album',
+    //turnaround: '2–5 business days',
+    price: 20,
+  },
+];
+
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const navigate = useNavigate();
 
-  const { cart } = state;
+  const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState(
+    state.cart.metodo === '' ? deliveryMethods[0] : deliveryMethods[state.cart.metodo.id -1 ]
+  );
+
   console.log(state);
 
-  const subtotal = cart.cartItems.reduce(
+  useEffect(() => {
+    ctxDispatch({
+      type: 'METODO_ADD',
+
+      payload: selectedDeliveryMethod,
+    });
+  }, [selectedDeliveryMethod, ctxDispatch]);
+
+  const subtotal = state.cart.cartItems.reduce(
     (partialSum, objectt) => partialSum + objectt.quantity * objectt.esc_price,
     0
   );
@@ -411,7 +445,7 @@ export default function Header() {
                       role="list"
                       className="divide-y divide-gray-200 px-4 sm:px-6 lg:px-8"
                     >
-                      {cart.cartItems.map((image, i) => (
+                      {state.cart.cartItems.map((image, i) => (
                         <li
                           key={i}
                           className="py-8 flex text-sm sm:items-center"
@@ -528,13 +562,85 @@ export default function Header() {
                         </li>
                       ))}
                     </ul>
+
+                    <div className="px-4 sm:px-6 lg:px-8 mt-10 border-t border-gray-200 pt-10">
+                      <RadioGroup
+                        value={selectedDeliveryMethod}
+                        onChange={setSelectedDeliveryMethod}
+                      >
+                        <RadioGroup.Label className="text-lg font-medium text-gray-900">
+                          Delivery method
+                        </RadioGroup.Label>
+
+                        <div className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
+                          {deliveryMethods.map((deliveryMethod) => (
+                            <RadioGroup.Option
+                              key={deliveryMethod.id}
+                              value={deliveryMethod}
+                              className={({ checked, active }) =>
+                                classNames(
+                                  checked
+                                    ? 'border-transparent'
+                                    : 'border-gray-300',
+                                  active ? 'ring-2 ring-indigo-500' : '',
+                                  'relative bg-white border rounded-lg shadow-sm p-4 flex cursor-pointer focus:outline-none'
+                                )
+                              }
+                            >
+                              {({ checked, active }) => (
+                                <>
+                                  <div className="flex-1 flex">
+                                    <div className="flex flex-col">
+                                      <RadioGroup.Label
+                                        as="span"
+                                        className="block text-sm font-medium text-gray-900"
+                                      >
+                                        {deliveryMethod.title}
+                                      </RadioGroup.Label>
+                                      <RadioGroup.Description
+                                        as="span"
+                                        className="mt-1 flex items-center text-sm text-gray-500"
+                                      >
+                                        {deliveryMethod.turnaround}
+                                      </RadioGroup.Description>
+                                      <RadioGroup.Description
+                                        as="span"
+                                        className="mt-6 text-sm font-medium text-gray-900"
+                                      >
+                                        Preço Total + {deliveryMethod.price} €
+                                      </RadioGroup.Description>
+                                    </div>
+                                  </div>
+                                  {checked ? (
+                                    <CheckCircleIcon
+                                      className="h-5 w-5 text-indigo-600"
+                                      aria-hidden="true"
+                                    />
+                                  ) : null}
+                                  <div
+                                    className={classNames(
+                                      active ? 'border' : 'border-2',
+                                      checked
+                                        ? 'border-indigo-500'
+                                        : 'border-transparent',
+                                      'absolute -inset-px rounded-lg pointer-events-none'
+                                    )}
+                                    aria-hidden="true"
+                                  />
+                                </>
+                              )}
+                            </RadioGroup.Option>
+                          ))}
+                        </div>
+                      </RadioGroup>
+                    </div>
                   </section>
 
                   <section
                     aria-labelledby="summary-heading"
-                    className="mt-auto sm:px-6 lg:px-8"
+                    className="mt-10 sm:px-6 lg:px-8"
                   >
-                    {cart.cartItems.length > 0 ? (
+                    {state.cart.cartItems.length > 0 ? (
                       <div className="bg-gray-50 p-6 sm:p-8 sm:rounded-lg">
                         <h2 id="summary-heading" className="sr-only">
                           Order summary
@@ -542,7 +648,7 @@ export default function Header() {
 
                         <div className="flow-root">
                           <dl className="-my-4 text-sm divide-y divide-gray-200">
-                            <div className="py-4 flex items-center justify-between">
+                            {/*<div className="py-4 flex items-center justify-between">
                               <dt className="text-gray-600">Subtotal</dt>
                               <dd className="font-medium text-gray-900">
                                 ${subtotal}
@@ -559,13 +665,17 @@ export default function Header() {
                               <dd className="font-medium text-gray-900">
                                 ${subtotal > 0 ? 5 : 0}
                               </dd>
-                            </div>
+                            </div>*/}
+
                             <div className="py-4 flex items-center justify-between">
                               <dt className="text-base font-medium text-gray-900">
                                 Order total
                               </dt>
                               <dd className="text-base font-medium text-gray-900">
-                                ${subtotal > 0 ? 5 + 5 + subtotal : 0}
+                                $
+                                {subtotal > 0
+                                  ? subtotal + selectedDeliveryMethod.price
+                                  : 0}
                               </dd>
                             </div>
                           </dl>
@@ -1004,7 +1114,7 @@ export default function Header() {
                         aria-hidden="true"
                       />
                       <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
-                        {cart.cartItems.reduce(
+                        {state.cart.cartItems.reduce(
                           (partialSum, objectt) =>
                             partialSum + objectt.quantity,
                           0

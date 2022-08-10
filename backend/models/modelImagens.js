@@ -5,6 +5,7 @@ const imagensSchema = new mongoose.Schema(
     imag_caminho: { type: String, required: true },
     imag_name: { type: String, required: true },
     grupo_id: { type: String, ref: 'Grupo', required: true },
+    imag_id:{type:String, required:true}
   },
   {
     timestamps: true,

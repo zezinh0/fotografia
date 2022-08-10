@@ -7,6 +7,7 @@ import gruposRouter from './routes/grupoRoutes.js';
 import imagensRouter from './routes/imagenssRoutes.js';
 import clientRouter from './routes/clientRoutes.js';
 import encomendaRouter from './routes/encomendaRoutes.js';
+import Stripe from 'stripe';
 
 const app = express();
 app.use(fileUpload());

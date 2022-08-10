@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import User from './modelUser.js';
 const grupoSchema = new mongoose.Schema(
   {
-    grupo_name: { type: String, unique: true },
+    grupo_name: { type: String },
     grupo_codigo: { type: String, required: true, unique: true },
     grupo_privado: { type: String, required: true },
     grupo_medidas: { type: String },

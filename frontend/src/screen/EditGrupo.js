@@ -123,7 +123,7 @@ export default function EditGrupo() {
     dispatch({ type: 'FETCH_REQUEST' });
 
     var grupo = new FormData();
-    let formData = new FormData();
+
     grupo.append('nome', grupo_name);
     grupo.append('enabled', enabled);
     let tam = '';
@@ -142,16 +142,15 @@ export default function EditGrupo() {
     console.log(tam);
 
     grupo.append('tamanho', tam);
-    if (files.length > 0) {
-      files.forEach((file) => {
-        formData.append('file', file);
-      });
-    }
 
     try {
       const res = await axios.put(`/api/grupos/update/${_idd}`, grupo);
       if (files.length > 0) {
+        var formData = new FormData();
         formData.append('grupo', _idd);
+        files.forEach((file) => {
+          formData.append('file', file);
+        });
         await axios.post('/api/imagens/upload', formData);
         console.log('Fotoss criadas');
       }

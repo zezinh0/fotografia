@@ -5,6 +5,7 @@ import Grupo from '../models/modelGrupo.js';
 import asyncHandler from 'express-async-handler';
 import Imagens from '../models/modelImagens.js';
 import fs from 'fs';
+import { v4 as uuidv4 } from 'uuid';
 const imagensRouter = express.Router();
 
 imagensRouter.get(
@@ -59,42 +60,25 @@ imagensRouter.post('/upload', async (req, res) => {
   }
 
   const files = req.files.file;
+  console.log('files');
+  console.log(files);
+  console.log('1111111111');
 
-  if (files.length > 1) {
-    files.forEach(async (file, i) => {
-      try {
-        console.log(i);
-        console.log(file);
-        let caminho = `C:/Users/José Costa/Documents/gallery/frontend/public/images2/${file.name}`;
-        file.mv(caminho);
-
-        await Imagens.create({
-          imag_caminho: caminho,
-          imag_name: file.name,
-          grupo_id: req.body.grupo,
-        });
-
-        console.log('Ok');
-      } catch (err) {
-        return res.status(500).send(err);
-      }
+  try {
+    let imag_id = uuidv4();
+    let caminho = `C:/Users/José Costa/Documents/gallery/frontend/public/images2/${imag_id}`;
+    await Imagens.create({
+      imag_caminho: caminho,
+      imag_name: files.name,
+      grupo_id: req.body.grupo,
+      imag_id: imag_id,
     });
-  } else {
-    try {
-      let caminho = `C:/Users/José Costa/Documents/gallery/frontend/public/images2/${files.name}`;
-      files.mv(
-        `C:/Users/José Costa/Documents/gallery/frontend/public/images2/${files.name}`
-      );
-      await Imagens.create({
-        imag_caminho: caminho,
-        imag_name: files.name,
-        grupo_id: req.body.grupo,
-      });
-      console.log('Ok');
-    } catch (err) {
-      return res.status(500).send(err);
-    }
+    files.mv(caminho);
+  } catch (err) {
+    return res.status(500).send(err);
   }
+
+  console.log('Ok');
 
   res.json('Upload Tooal');
 });
