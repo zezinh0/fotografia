@@ -70,7 +70,18 @@ function reducer(state, action) {
       );
       localStorage.setItem('cartImages', JSON.stringify(cartItemss));
       return { ...state, cart: { ...state.cart, cartItems: cartItemss } };
-
+    case 'CART_REMOVE_ALL':
+      const cartItemsss = [];
+      localStorage.setItem('cartImages', JSON.stringify(cartItemsss));
+      return { ...state, cart: { ...state.cart, cartItems: cartItemsss } };
+    case 'METODO_REMOVE':
+      const metodo = '';
+      localStorage.setItem('metodo', JSON.stringify(metodo));
+      return { ...state, cart: { ...state.cart, metodo: metodo } };
+    case 'GRUPO_REMOVE':
+      const grupo = '';
+      localStorage.setItem('grupo', JSON.stringify(grupo));
+      return { ...state, cart: { ...state.cart, grupo: grupo } };
     default:
       return state;
   }

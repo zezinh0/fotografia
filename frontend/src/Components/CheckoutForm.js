@@ -14,11 +14,13 @@ import {
   PaymentElement,
 } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import { useNavigate } from 'react-router-dom';
 
 export default function CheckoutForm(props) {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const stripe = useStripe();
   const elements = useElements();
+  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
   const subtotal = state.cart.cartItems.reduce(
@@ -177,7 +179,15 @@ export default function CheckoutForm(props) {
             imageData
           );
           console.log(resp);
+          ctxDispatch({
+            type: 'CART_REMOVE_ALL',
+          });
+          ctxDispatch({
+            type: 'METODO_REMOVE',
+          });
+
           console.log('FETCH_SUCCESS');
+          navigate('/imagelist');
         } catch (error) {
           console.log(error);
         }

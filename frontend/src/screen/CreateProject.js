@@ -119,7 +119,7 @@ export default function CreateProject() {
       console.log('FETCH_FAIL');
       //dispatch({ type: 'FETCH_FAIL', payload: error.message });
     }
-    //navigate('/project');
+    navigate('/project');
   };
 
   const Tamanhos = () => {

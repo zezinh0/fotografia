@@ -40,6 +40,21 @@ encomendaRouter.get(
   })
 );
 
+encomendaRouter.get(
+  '/encomendas/:grupo_id',
+  asyncHandler(async (req, res) => {
+    const encomendas = await Encomendas.find({
+      grupo_id: req.params.grupo_id,
+    });
+
+    if (encomendas) {
+      res.send(encomendas);
+    } else {
+      res.status(404).send({ message: 'Erro ao buscar as Imagens' });
+    }
+  })
+);
+
 encomendaRouter.post(
   '/criarencomenda',
   asyncHandler(async (req, res) => {
