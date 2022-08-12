@@ -255,7 +255,10 @@ function App() {
                 <Route path="/imagesofproject" element={<ImagesofProject />} />
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/createproject" element={<CreateProject />} />
-                <Route path="/eachorder/:id" element={<EachOrder />} />
+                <Route
+                  path="/eachorder/:encomenda_id"
+                  element={<EachOrder />}
+                />
                 <Route path="/editgrupo/:id" element={<EditGrupo />} />
               </Routes>
             </div>

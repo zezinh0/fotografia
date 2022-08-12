@@ -125,7 +125,6 @@ export default function ListofProject(props) {
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <Link
                             to={`/editgrupo/${evento._id}`}
-                            href="#"
                             className="text-blue-500 hover:text-blue-900"
                           >
                             Edit

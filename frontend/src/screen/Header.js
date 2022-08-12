@@ -473,7 +473,7 @@ export default function Header() {
                               </p>*/}
                             </div>
                             <p className="row-end-2 row-span-2 font-medium text-gray-900 sm:ml-6 sm:order-1 sm:flex-none sm:w-1/3 sm:text-right">
-                              {image.esc_price}€
+                              {image.esc_price} €
                             </p>
                             <div className="flex items-center sm:flex-none sm:block sm:text-center">
                               {/*<label

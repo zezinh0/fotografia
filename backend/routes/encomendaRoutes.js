@@ -41,6 +41,21 @@ encomendaRouter.get(
 );
 
 encomendaRouter.get(
+  '/getencomenda/:id',
+  asyncHandler(async (req, res) => {
+    const encomenda = await Encomendas.find({
+      _id: req.params.id,
+    });
+
+    if (encomenda) {
+      res.send(encomenda);
+    } else {
+      res.status(404).send({ message: 'Erro ao buscar a encomenda' });
+    }
+  })
+);
+
+encomendaRouter.get(
   '/encomendas/:grupo_id',
   asyncHandler(async (req, res) => {
     const encomendas = await Encomendas.find({
