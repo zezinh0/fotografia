@@ -1,9 +1,10 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { Suspense, useEffect, useReducer, useState } from 'react';
 import { clientes } from '../data2';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import ListofOrders from '../Components/ListofOrders';
+
 import Loading from '../Components/Loading';
+import ListofOrders from '../Components/ListofOrders.js';
 
 const orders = [
   {

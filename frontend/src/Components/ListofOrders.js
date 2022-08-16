@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function ListofOrders(props) {
   const encomendas = props.encomendass;
+  console.log('yyyyy');
   console.log(encomendas);
   console.log(encomendas);
+
   {
     /*
     <Link
