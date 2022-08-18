@@ -1,8 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useReducer, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Loading from '../Components/Loading';
 import OrderInfo from '../Components/OrderInfo';
+import HeaderPho from './HeaderPho';
 const orders = [
   {
     number: 'WU88191111',
@@ -60,12 +61,12 @@ export default function EachOrder() {
       dispatch({ type: 'FETCH_REQUEST' });
       console.log('2222222222222222222222');
       try {
-        const result = await axios.get(`/api/encomenda/getencomenda/${idd}`);
+        const result = await axios.get(`/api/encomenda/getencomenda/${ipp}`);
 
         console.log('2222222222222222222222');
         console.log(result);
 
-        const result2 = await axios.get(`/api/encomenda/imagens/${idd}`);
+        const result2 = await axios.get(`/api/encomenda/imagens/${ipp}`);
         console.log('33333333333333333333');
         console.log(result2);
         let env = { encomenda: result.data[0], imagens: result2.data };
@@ -75,19 +76,38 @@ export default function EachOrder() {
       }
     };
     fetchData();
-  }, [idd]);
+  }, [ipp]);
 
   return (
-    <div className="bg-white">
-      {loading ? (
-        <Loading />
-      ) : error ? (
-        <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:pb-24 lg:px-8">
-          Erro
+    <div className="min-h-full">
+      <HeaderPho />
+
+      <header className="bg-white shadow">
+        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl tracking-tight font-bold text-gray-600">
+            <Link to={`/orders`} className="text-gray-600 hover:text-black">
+              Encomenda
+            </Link>
+            {' > '} Número da Encomenda: {encomenda.encomenda.enco_num}
+          </h2>
         </div>
-      ) : (
-        <OrderInfo encomenda={encomenda} />
-      )}
+      </header>
+      <main>
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          {/* Replace with your content */}
+          <div className="px-4 py-6 sm:px-0">
+            {loading ? (
+              <Loading />
+            ) : error ? (
+              <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:pb-24 lg:px-8">
+                Erro
+              </div>
+            ) : (
+              <OrderInfo encomenda={encomenda} />
+            )}
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

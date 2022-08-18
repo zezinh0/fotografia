@@ -6,6 +6,7 @@ import ButtonNew from '../Components/ButtonNew.js';
 import logger from 'use-reducer-logger';
 import axios from 'axios';
 import Loading from '../Components/Loading.js';
+import HeaderPho from './HeaderPho.js';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -43,25 +44,32 @@ export default function Project() {
   }, []);
 
   return (
-    <div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        <h1 className="text-3xl font-semibold text-gray-900">Projetos</h1>
-      </div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        {loading ? (
-          <Loading />
-        ) : error ? (
-          <div>
-            <ButtonNew eventos={eventos} />
-            <ListofProject eventos={eventos} />
-          </div>
-        ) : (
-          <div>
-            <ButtonNew eventos={eventos} />
-            <ListofProject eventos={eventos} />
-          </div>
-        )}
-      </div>
+    <div className="min-h-full">
+      <HeaderPho />
+      <header className="bg-white shadow">
+        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+          <h1 className="text-3xl tracking-tight font-bold text-gray-900">
+            Grupos
+          </h1>
+        </div>
+      </header>
+      <main>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+          {loading ? (
+            <Loading />
+          ) : error ? (
+            <div>
+              <ButtonNew eventos={eventos} />
+              <ListofProject eventos={eventos} />
+            </div>
+          ) : (
+            <div>
+              <ButtonNew eventos={eventos} />
+              <ListofProject eventos={eventos} />
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 }

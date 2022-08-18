@@ -5,6 +5,7 @@ import axios from 'axios';
 
 import Loading from '../Components/Loading';
 import ListofOrders from '../Components/ListofOrders.js';
+import HeaderPho from './HeaderPho';
 
 const orders = [
   {
@@ -89,24 +90,31 @@ export default function Orders() {
   }, []);
 
   return (
-    <div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        <h1 className="text-3xl font-semibold text-gray-900">Encomendas</h1>
-      </div>
+    <div className="min-h-full">
+      <HeaderPho />
 
-      <div className="max-w-7xl mx-auto px-4 py-10 sm:px-6 md:px-8">
-        {loading ? (
-          <Loading />
-        ) : error ? (
-          <div>
-            <ListofOrders encomendass={encomendass} />
-          </div>
-        ) : (
-          <div>
-            <ListofOrders encomendass={encomendass} />
-          </div>
-        )}
-      </div>
+      <header className="bg-white shadow">
+        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+          <h1 className="text-3xl tracking-tight font-bold text-gray-900">
+            Encomendas
+          </h1>
+        </div>
+      </header>
+      <main>
+        <div className="max-w-7xl mx-auto px-4 py-10 sm:px-6 md:px-8">
+          {loading ? (
+            <Loading />
+          ) : error ? (
+            <div>
+              <ListofOrders encomendass={encomendass} />
+            </div>
+          ) : (
+            <div>
+              <ListofOrders encomendass={encomendass} />
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 }

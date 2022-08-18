@@ -7,12 +7,6 @@ export default function OrderInfo(props) {
   return (
     <div>
       <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:pb-24 lg:px-8">
-        <div className="max-w-xl ">
-          <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
-            Encomenda
-          </h1>
-        </div>
-
         <div className="mt-16">
           <h2 className="sr-only">Recent orders</h2>
 
