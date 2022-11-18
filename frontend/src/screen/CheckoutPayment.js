@@ -44,7 +44,7 @@ import axios from 'axios';
 import CheckoutForm2 from '../Components/CheckoutForm2.js';
 
 const stripePromise = loadStripe(
-  'pk_test_51LSXm2GgBxYtUt4K3h0nx3YO60JE2Pp6TxRoMnCuNj2UMYA0edBNzzq9W5V7YXDU9jJIjahPNhOaYHj3pdHDg5QY00w8HLH2aY'
+  
 );
 
 const pages = [
