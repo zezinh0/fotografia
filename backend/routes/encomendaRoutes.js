@@ -10,13 +10,13 @@ import Encomendas from '../models/modelEncomendas.js';
 import moment from 'moment';
 const encomendaRouter = express.Router();
 const stripe = new Stripe(
-  'sk_test_51LSXm2GgBxYtUt4KgTEAMsBl6jjPbmdTy5DnQKDFxIJCsYlZ41Ltirw8LwCpvgigGyBbhM6eBHnP0cI0YMqO6o6800X3xpdP1F'
+  
 );
 import bodyParser from 'body-parser';
 import sgMail from '@sendgrid/mail';
-//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
+
 sgMail.setApiKey(
-  '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'
+  
 );
 encomendaRouter.get(
   '/imagens/:enco_id',
@@ -255,7 +255,7 @@ encomendaRouter.post('/create-payment-intent', async (req, res) => {
   }
 });
 const endpointSecret =
-  'whsec_58fb2ead010b2179deb8cdd72d7f989523ddb5d3a3655c0366abb69c3d3450ad';
+  ;
 encomendaRouter.post(
   '/webhook',
   express.raw({ type: 'application/json' }),
