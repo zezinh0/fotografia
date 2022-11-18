@@ -136,8 +136,8 @@ encomendaRouter.post(
       //let data = encomenda;
       //console.log(encomenda._id.toString());
       const msg = {
-        to: 'josemanuel19982425@gmail.com', // Change to your recipient
-        from: 'ze_manuel_costa1998@hotmail.com', // Change to your verified sender
+        to: '', // Change to your recipient
+        from: '', // Change to your verified sender
         subject: 'Sending with SendGrid is Fun',
         text: 'and easy to do anywhere, even with Node.js',
         html: '<strong>and easy to do anywhere, even with Node.jsssss</strong>',
