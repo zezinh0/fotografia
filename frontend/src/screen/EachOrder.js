@@ -1,40 +1,126 @@
+import { Fragment, useState, useReducer, useEffect } from 'react';
+import { Dialog, Menu, Transition, Popover } from '@headlessui/react';
 import axios from 'axios';
-import React, { useEffect, useReducer, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import Loading from '../Components/Loading';
-import OrderInfo from '../Components/OrderInfo';
-import HeaderPho from './HeaderPho';
-const orders = [
-  {
-    number: 'WU88191111',
-    date: 'January 22, 2021',
-    datetime: '2021-01-22',
-    invoiceHref: '#',
-    total: '$238.00',
-    products: [
-      {
-        id: 1,
-        name: 'Machined Pen and Pencil Set',
-        href: '#',
-        price: '$70.00',
-        status: 'incompleted',
-        imageSrc:
-          'https://tailwindui.com/img/ecommerce-images/order-history-page-02-product-01.jpg',
-        imageAlt:
-          'Detail of mechanical pencil tip with machined black steel shaft and chrome lead tip.',
-      },
-      // More products...
-    ],
-  },
-  // More orders...
+
+import {
+  ClockIcon,
+  HomeIcon,
+  MenuAlt1Icon,
+  ViewListIcon,
+  XIcon,
+  ScaleIcon,
+  UserIcon,
+  ThumbUpIcon,
+  CheckIcon,
+  CubeIcon,
+  TruckIcon,
+} from '@heroicons/react/outline';
+import {
+  ChevronRightIcon,
+  DotsHorizontalIcon,
+  SearchIcon,
+  SelectorIcon,
+  QuestionMarkCircleIcon,
+  CurrencyDollarIcon,
+  ExclamationIcon,
+  PaperClipIcon,
+  ChevronUpIcon,
+} from '@heroicons/react/solid';
+import { v4 as uuidv4 } from 'uuid';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { PlusIcon } from '@heroicons/react/solid';
+
+const navigation = [
+  { name: 'Home', href: '/', icon: HomeIcon, current: false },
+  { name: 'Events', href: '/project', icon: ViewListIcon, current: false },
+  { name: 'Orders', href: '/orders', icon: CurrencyDollarIcon, current: true },
 ];
+const teams = [
+  { name: 'Engineering', href: '#', bgColorClass: 'bg-indigo-500' },
+  { name: 'Human Resources', href: '#', bgColorClass: 'bg-green-500' },
+  { name: 'Customer Success', href: '#', bgColorClass: 'bg-yellow-500' },
+];
+const cards = [
+  { name: 'Account balance', href: '#', icon: ScaleIcon, amount: '$30,659.45' },
+  { name: 'Account balance', href: '#', icon: ScaleIcon, amount: '$30,659.45' },
+  { name: 'Account balance', href: '#', icon: ScaleIcon, amount: '$30,659.45' },
+  { name: 'Account balance', href: '#', icon: ScaleIcon, amount: '$30,659.45' },
+  // More items...
+];
+
+const pages = [
+  { name: 'Orders', href: '/orders', current: false },
+  { name: ' Order', href: '#', current: true },
+];
+const projects = [
+  {
+    id: 1,
+    title: 'GraphQL API',
+    initials: 'GA',
+    team: 'Engineering',
+    members: [
+      {
+        name: 'Dries Vincent',
+        handle: 'driesvincent',
+        imageUrl:
+          'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+      },
+      {
+        name: 'Lindsay Walton',
+        handle: 'lindsaywalton',
+        imageUrl:
+          'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+      },
+      {
+        name: 'Courtney Henry',
+        handle: 'courtneyhenry',
+        imageUrl:
+          'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+      },
+      {
+        name: 'Tom Cook',
+        handle: 'tomcook',
+        imageUrl:
+          'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+      },
+    ],
+    totalMembers: 12,
+    lastUpdated: 'March 17, 2020',
+    pinned: true,
+    bgColorClass: 'bg-pink-600',
+  },
+  // More projects...
+];
+const pinnedProjects = projects.filter((project) => project.pinned);
+const payments = [
+  {
+    id: 1,
+    date: '1/1/2020',
+    datetime: '2020-01-01',
+    description: 'Business Plan - Annual Billing',
+    amount: 'CA$109.00',
+    href: '#',
+  },
+  {
+    id: 1,
+    date: '1/1/2020',
+    datetime: '2020-01-01',
+    description: 'Business Plan - Annual Billing',
+    amount: 'CA$109.00',
+    href: '#',
+  },
+  // More payments...
+];
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ');
+}
 
 const reducer = (state, action) => {
   switch (action.type) {
     case 'FETCH_REQUEST':
       return { loading: true };
     case 'FETCH_SUCCESS':
-      return { encomenda: action.payload, loading: false };
+      return { loading: false };
     case 'FETCH_FAIL':
       return { loading: false, error: action.payload };
     default:
@@ -42,308 +128,1307 @@ const reducer = (state, action) => {
   }
 };
 
-export default function EachOrder() {
-  console.log('popopopopopopo444444444444444444444444444');
+const items = [
+  { id: 1 },
+  { id: 2 },
+  { id: 3 },
+  // More items...
+];
+const eventTypes = {
+  processing: { icon: DotsHorizontalIcon, bgColorClass: 'bg-blue-500' },
+  created: { icon: CubeIcon, bgColorClass: 'bg-gray-500' },
+  completed: { icon: CheckIcon, bgColorClass: 'bg-green-500' },
+  sent: { icon: TruckIcon, bgColorClass: 'bg-indigo-500' },
+};
+
+const products = [
+  {
+    id: 1,
+    name: 'Micro Backpack',
+    href: '#',
+    price: '$70.00',
+    color: 'Moss',
+    size: '5L',
+    imageSrc:
+      'https://tailwindui.com/img/ecommerce-images/checkout-page-04-product-01.jpg',
+    imageAlt:
+      'Moss green canvas compact backpack with double top zipper, zipper front pouch, and matching carry handle and backpack straps.',
+  },
+  {
+    id: 2,
+    name: 'Micro Backpack',
+    href: '#',
+    price: '$70.00',
+    color: 'Moss',
+    size: '5L',
+    imageSrc:
+      'https://tailwindui.com/img/ecommerce-images/checkout-page-04-product-01.jpg',
+    imageAlt:
+      'Moss green canvas compact backpack with double top zipper, zipper front pouch, and matching carry handle and backpack straps.',
+  },
+  {
+    id: 3,
+    name: 'Micro Backpack',
+    href: '#',
+    price: '$70.00',
+    color: 'Moss',
+    size: '5L',
+    imageSrc:
+      'https://tailwindui.com/img/ecommerce-images/checkout-page-04-product-01.jpg',
+    imageAlt:
+      'Moss green canvas compact backpack with double top zipper, zipper front pouch, and matching carry handle and backpack straps.',
+  },
+  // More products...
+];
+export default function Example() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const params = useParams();
-  const { idd } = params;
-  const ipp = '62faadfb8237320e0f6e52e4';
-  const [{ loading, error, encomenda }, dispatch] = useReducer(reducer, {
+  const { id } = params;
+  console.log('O ID');
+  console.log(id);
+  const [{ loading, error }, dispatch] = useReducer(reducer, {
     loading: false,
     error: '',
-    encomenda: [],
   });
+  const navigate = useNavigate();
+
+  const [imagens, setImagens] = useState([]);
+  const [encomenda, setEcomenda] = useState({});
+  const [flag, setFlag] = useState(false);
 
   useEffect(() => {
-    console.log('2222222222222222222222');
-    const fetchData = async () => {
-      console.log('2222222222222222222222');
+    const fetchData = async (idd) => {
       dispatch({ type: 'FETCH_REQUEST' });
-      console.log('2222222222222222222222');
       try {
-        const result = await axios.get(`/api/encomenda/getencomenda/${ipp}`);
+        const result = await axios.get(`/api/encomenda/getencomenda/${idd}`);
 
-        console.log('2222222222222222222222');
-        console.log(result);
+        const result2 = await axios.get(`/api/encomenda/imagens/${idd}`);
 
-        const result2 = await axios.get(`/api/encomenda/imagens/${ipp}`);
-        console.log('33333333333333333333');
-        console.log(result2);
-        let env = { encomenda: result.data[0], imagens: result2.data };
-        dispatch({ type: 'FETCH_SUCCESS', payload: env });
+        setEcomenda(result.data.data[0]);
+        setImagens(result2.data.data);
+        setFlag(result2.data.flag);
+        console.log(encomenda);
+        console.log(imagens);
+        console.log(result2.data.flag);
+        dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
       } catch (error) {
         dispatch({ type: 'FETCH_FAIL', payload: error.message });
       }
     };
-    fetchData();
-  }, [ipp]);
+    fetchData(id);
+  }, [id]);
 
+  const Processing = async () => {
+    const formData = new FormData();
+    formData.append('id', id);
+    formData.append('num', '2');
+    const result = await axios.put(`/api/encomenda/update_state`, formData);
+    console.log(result);
+    window.location.reload(false);
+  };
+  const Sent = async () => {
+    const formData = new FormData();
+    formData.append('id', id);
+    formData.append('num', '3');
+    const result = await axios.put(`/api/encomenda/update_state`, formData);
+    console.log(result);
+    window.location.reload(false);
+  };
+
+  console.log(encomenda.enco_estado);
+  console.log(flag);
   return (
-    <div className="min-h-full">
-      <HeaderPho />
+    <>
+      {/*
+        This example requires updating your template:
 
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl tracking-tight font-bold text-gray-600">
-            <Link to={`/orders`} className="text-gray-600 hover:text-black">
-              Encomenda
-            </Link>
-            {' > '} Número da Encomenda: {encomenda.encomenda.enco_num}
-          </h2>
-        </div>
-      </header>
-      <main>
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          {/* Replace with your content */}
-          <div className="px-4 py-6 sm:px-0">
-            {loading ? (
-              <Loading />
-            ) : error ? (
-              <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:pb-24 lg:px-8">
-                Erro
-              </div>
-            ) : (
-              <OrderInfo encomenda={encomenda} />
-            )}
-          </div>
-        </div>
-      </main>
-    </div>
-  );
-}
-
-/**
- * 
- * <table className="mt-4 w-full text-gray-500 sm:mt-6">
-                  <caption className="sr-only">Products</caption>
-                  <thead className="sr-only text-sm text-gray-500 text-left sm:not-sr-only">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="sm:w-2/5 lg:w-1/3 pr-8 py-3 font-normal"
-                      >
-                        Imagem
-                      </th>
-                      <th
-                        scope="col"
-                        className="hidden w-1/5 pr-8 py-3 font-normal sm:table-cell"
-                      >
-                        Tamanho
-                      </th>
-                      <th
-                        scope="col"
-                        className="hidden pr-8 py-3 font-normal sm:table-cell"
-                      >
-                        Status
-                      </th>
-                      <th
-                        scope="col"
-                        className="w-0 py-3 font-normal text-right"
-                      >
-                        How is the Order?
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="border-b border-gray-200 divide-y divide-gray-200 text-sm sm:border-t">
-                    {encomenda.imagens.map((imagem, i) => (
-                      <tr key={i}>
-                        <td className="py-6 pr-8">
-                          <div className="flex items-center">
-                            <img
-                              src={imagem.caminho.slice(53)}
-                              alt="Imagem Encomendada"
-                              className="w-16 h-16 object-center object-cover rounded mr-6"
-                            />
-                            <div>
-                              <div className="font-medium text-gray-900">
-                                {imagem.name}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="hidden py-6 pr-8 sm:table-cell">
-                          {imagem.tamanho}
-                        </td>
-                        <td className="hidden py-6 pr-8 sm:table-cell">
-                          {'incompleted' === 'incompleted' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-300 text-red-800">
-                              Incomplete
-                            </span>
-                          ) : (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-300 text-green-800">
-                              Completed
-                            </span>
-                          )}
-                        </td>
-
-                        <td className="py-6 font-medium text-right whitespace-nowrap">
-                          {'incompleted' === 'incompleted' ? (
-                            <button className="w-full flex items-center justify-center bg-green-300 mt-6 py-2 px-4 border border-green-300 rounded-md shadow-sm text-sm font-medium text-green-900 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:w-auto sm:mt-0">
-                              Completed
-                            </button>
-                          ) : (
-                            <button className="w-full flex items-center justify-center bg-red-300 mt-6 py-2 px-4 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-900 hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:w-auto sm:mt-0">
-                              Incompleted
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
- */
-
-/**
- * 
- * 
- *  <div className="max-w-xl ">
-            <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
-              Encomenda
-            </h1>
-          </div>
-
-          <div className="mt-16">
-            <h2 className="sr-only">Recent orders</h2>
-
-            <div className="space-y-20">
-              <div>
-                <div className="bg-gray-50 rounded-lg py-6 px-4 sm:px-6 sm:flex sm:items-center sm:justify-between sm:space-x-6 lg:space-x-8">
-                  <dl className="divide-y divide-gray-200 space-y-6 text-sm text-gray-600 flex-auto sm:divide-y-0 sm:space-y-2 sm:grid sm:grid-cols-2 sm:gap-x-3 lg:w-1/1 lg:flex-none lg:gap-x-10">
-                    <div className="flex justify-between sm:block">
-                      <dt className="font-medium text-gray-900">
-                        Data da Encomenda:
-                      </dt>
-                      <dd className="sm:mt-1">
-                        {encomenda.createdAt.slice(0, 10)}
-                      </dd>
-                    </div>
-                    <div className="flex justify-between pt-4 sm:block sm:pt-0">
-                      <dt className="font-medium text-gray-900">
-                        Número do Pedido:
-                      </dt>
-                      <dd className="sm:mt-1">{encomenda.enco_num}</dd>
-                    </div>
-                    <div className="flex justify-between pt-4 sm:block sm:pt-0">
-                      <dt className="font-medium text-gray-900">Nome:</dt>
-                      <dd className="sm:mt-1">
-                        {encomenda.enco_namepro} {encomenda.enco_nameapl}
-                      </dd>
-                    </div>
-                    <div className="flex justify-between pt-4 sm:block sm:pt-0">
-                      <dt className="font-medium text-gray-900">Email:</dt>
-                      <dd className="sm:mt-1">{encomenda.enco_email}</dd>
-                    </div>
-                    <div className="flex justify-between pt-4 sm:block sm:pt-0">
-                      <dt className="font-medium text-gray-900">Telemóvel:</dt>
-                      <dd className="sm:mt-1">{encomenda.enco_telemovel}</dd>
-                    </div>
-                    <div className="flex justify-between pt-4 sm:block sm:pt-0">
-                      <dt className="font-medium text-gray-900">Morada: </dt>
-                      <dd className="sm:mt-1">{encomenda.enco_morada}</dd>
-                    </div>
-                    <div className="flex justify-between pt-4 sm:block sm:pt-0">
-                      <dt className="font-medium text-gray-900">
-                        Código Postal:
-                      </dt>
-                      <dd className="sm:mt-1">{encomenda.enco_postal}</dd>
-                    </div>
-                    <div className="flex justify-between pt-4 sm:block sm:pt-0">
-                      <dt className="font-medium text-gray-900">Cidade:</dt>
-                      <dd className="sm:mt-1">{encomenda.enco_cidade}</dd>
-                    </div>
-                    <div className="flex justify-between pt-4 sm:block sm:pt-0">
-                      <dt className="font-medium text-gray-900">País:</dt>
-                      <dd className="sm:mt-1">{encomenda.enco_pais}</dd>
-                    </div>
-                    <div className="flex justify-between pt-4 sm:block sm:pt-0">
-                      <dt className="font-medium text-gray-900">Método:</dt>
-                      <dd className="sm:mt-1">{encomenda.enco_metodoEt}</dd>
-                    </div>
-                    <div className="flex justify-between pt-4 sm:block sm:pt-0">
-                      <dt className="font-medium text-gray-900">Total:</dt>
-                      <dd className="sm:mt-1">{encomenda.enco_preco} €</dd>
-                    </div>
-                  </dl>
+        ```
+        <html class="h-full bg-white">
+        <body class="h-full">
+        ```
+      */}
+      <div className="min-h-full">
+        <Transition.Root show={sidebarOpen} as={Fragment}>
+          <Dialog
+            as="div"
+            className="fixed inset-0 flex z-40 lg:hidden"
+            onClose={setSidebarOpen}
+          >
+            <Transition.Child
+              as={Fragment}
+              enter="transition-opacity ease-linear duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="transition-opacity ease-linear duration-300"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Dialog.Overlay className="fixed inset-0 bg-gray-600 bg-opacity-75" />
+            </Transition.Child>
+            <Transition.Child
+              as={Fragment}
+              enter="transition ease-in-out duration-300 transform"
+              enterFrom="-translate-x-full"
+              enterTo="translate-x-0"
+              leave="transition ease-in-out duration-300 transform"
+              leaveFrom="translate-x-0"
+              leaveTo="-translate-x-full"
+            >
+              <div className="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-white">
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-in-out duration-300"
+                  enterFrom="opacity-0"
+                  enterTo="opacity-100"
+                  leave="ease-in-out duration-300"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <div className="absolute top-0 right-0 -mr-12 pt-2">
+                    <button
+                      type="button"
+                      className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                      onClick={() => setSidebarOpen(false)}
+                    >
+                      <span className="sr-only">Close sidebar</span>
+                      <XIcon
+                        className="h-6 w-6 text-white"
+                        aria-hidden="true"
+                      />
+                    </button>
+                  </div>
+                </Transition.Child>
+                <div className="flex-shrink-0 flex items-center px-4">
+                  <img
+                    className="h-8 w-auto"
+                    src="https://tailwindui.com/img/logos/workflow-logo-purple-500-mark-gray-700-text.svg"
+                    alt="Workflow"
+                  />
                 </div>
-
-                <table className="mt-4 w-full text-gray-500 sm:mt-6">
-                  <caption className="sr-only">Products</caption>
-                  <thead className="sr-only text-sm text-gray-500 text-left sm:not-sr-only">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="sm:w-2/5 lg:w-1/3 pr-8 py-3 font-normal"
-                      >
-                        Imagem
-                      </th>
-                      <th
-                        scope="col"
-                        className="hidden w-1/5 pr-8 py-3 font-normal sm:table-cell"
-                      >
-                        Tamanho
-                      </th>
-                      <th
-                        scope="col"
-                        className="hidden pr-8 py-3 font-normal sm:table-cell"
-                      >
-                        Status
-                      </th>
-                      <th
-                        scope="col"
-                        className="w-0 py-3 font-normal text-right"
-                      >
-                        How is the Order?
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="border-b border-gray-200 divide-y divide-gray-200 text-sm sm:border-t">
-                    {imagens.map((imagem, i) => (
-                      <tr key={i}>
-                        <td className="py-6 pr-8">
-                          <div className="flex items-center">
-                            <img
-                              src={imagem.caminho.slice(53)}
-                              alt="Imagem Encomendada"
-                              className="w-16 h-16 object-center object-cover rounded mr-6"
-                            />
-                            <div>
-                              <div className="font-medium text-gray-900">
-                                {imagem.name}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="hidden py-6 pr-8 sm:table-cell">
-                          {imagem.tamanho}
-                        </td>
-                        <td className="hidden py-6 pr-8 sm:table-cell">
-                          {'incompleted' === 'incompleted' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-300 text-red-800">
-                              Incomplete
-                            </span>
-                          ) : (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-300 text-green-800">
-                              Completed
-                            </span>
+                <div className="mt-5 flex-1 h-0 overflow-y-auto">
+                  <nav className="px-2">
+                    <div className="space-y-1">
+                      {navigation.map((item) => (
+                        <Link
+                          key={item.name}
+                          to={item.href}
+                          className={classNames(
+                            item.current
+                              ? 'bg-gray-100 text-gray-900'
+                              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
+                            'group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md'
                           )}
-                        </td>
+                          aria-current={item.current ? 'page' : undefined}
+                        >
+                          <item.icon
+                            className={classNames(
+                              item.current
+                                ? 'text-gray-500'
+                                : 'text-gray-400 group-hover:text-gray-500',
+                              'mr-3 flex-shrink-0 h-6 w-6'
+                            )}
+                            aria-hidden="true"
+                          />
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </nav>
+                </div>
+              </div>
+            </Transition.Child>
+            <div className="flex-shrink-0 w-14" aria-hidden="true">
+              {/* Dummy element to force sidebar to shrink to fit close icon */}
+            </div>
+          </Dialog>
+        </Transition.Root>
 
-                        <td className="py-6 font-medium text-right whitespace-nowrap">
-                          {'incompleted' === 'incompleted' ? (
-                            <button className="w-full flex items-center justify-center bg-green-300 mt-6 py-2 px-4 border border-green-300 rounded-md shadow-sm text-sm font-medium text-green-900 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:w-auto sm:mt-0">
-                              Completed
-                            </button>
-                          ) : (
-                            <button className="w-full flex items-center justify-center bg-red-300 mt-6 py-2 px-4 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-900 hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:w-auto sm:mt-0">
-                              Incompleted
-                            </button>
+        {/* Static sidebar for desktop */}
+        <div className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:border-r lg:border-gray-200 lg:pt-5 lg:pb-4 lg:bg-gray-100">
+          <div className="flex items-center flex-shrink-0 px-6">
+            <img
+              className="h-8 w-auto"
+              src="https://tailwindui.com/img/logos/workflow-logo-purple-500-mark-gray-700-text.svg"
+              alt="Workflow"
+            />
+          </div>
+          {/* Sidebar component, swap this element with another sidebar if you like */}
+          <div className="mt-6 h-0 flex-1 flex flex-col overflow-y-auto">
+            {/* User account dropdown */}
+            <Menu as="div" className="px-3 relative inline-block text-left">
+              <div>
+                <Menu.Button className="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-purple-500">
+                  <span className="flex w-full justify-between items-center">
+                    <span className="flex min-w-0 items-center justify-between space-x-3">
+                      <img
+                        className="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0"
+                        src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80"
+                        alt=""
+                      />
+                      <span className="flex-1 flex flex-col min-w-0">
+                        <span className="text-gray-900 text-sm font-medium truncate">
+                          Jessy Schwarz
+                        </span>
+                      </span>
+                    </span>
+                    <SelectorIcon
+                      className="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                      aria-hidden="true"
+                    />
+                  </span>
+                </Menu.Button>
+              </div>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="z-10 mx-3 origin-top absolute right-0 left-0 mt-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
+                  <div className="py-1">
+                    <Menu.Item>
+                      {({ active }) => (
+                        <a
+                          href="#"
+                          className={classNames(
+                            active
+                              ? 'bg-gray-100 text-gray-900'
+                              : 'text-gray-700',
+                            'block px-4 py-2 text-sm'
                           )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        >
+                          View profile
+                        </a>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <a
+                          href="#"
+                          className={classNames(
+                            active
+                              ? 'bg-gray-100 text-gray-900'
+                              : 'text-gray-700',
+                            'block px-4 py-2 text-sm'
+                          )}
+                        >
+                          Settings
+                        </a>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <a
+                          href="#"
+                          className={classNames(
+                            active
+                              ? 'bg-gray-100 text-gray-900'
+                              : 'text-gray-700',
+                            'block px-4 py-2 text-sm'
+                          )}
+                        >
+                          Notifications
+                        </a>
+                      )}
+                    </Menu.Item>
+                  </div>
+                  <div className="py-1">
+                    <Menu.Item>
+                      {({ active }) => (
+                        <a
+                          href="#"
+                          className={classNames(
+                            active
+                              ? 'bg-gray-100 text-gray-900'
+                              : 'text-gray-700',
+                            'block px-4 py-2 text-sm'
+                          )}
+                        >
+                          Get desktop app
+                        </a>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <a
+                          href="#"
+                          className={classNames(
+                            active
+                              ? 'bg-gray-100 text-gray-900'
+                              : 'text-gray-700',
+                            'block px-4 py-2 text-sm'
+                          )}
+                        >
+                          Support
+                        </a>
+                      )}
+                    </Menu.Item>
+                  </div>
+                  <div className="py-1">
+                    <Menu.Item>
+                      {({ active }) => (
+                        <a
+                          href="#"
+                          className={classNames(
+                            active
+                              ? 'bg-gray-100 text-gray-900'
+                              : 'text-gray-700',
+                            'block px-4 py-2 text-sm'
+                          )}
+                        >
+                          Logout
+                        </a>
+                      )}
+                    </Menu.Item>
+                  </div>
+                </Menu.Items>
+              </Transition>
+            </Menu>
+            {/* Sidebar Search */}
+
+            {/* Navigation */}
+            <nav className="px-3 mt-6">
+              <div className="space-y-1">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={classNames(
+                      item.current
+                        ? 'bg-gray-200 text-gray-900'
+                        : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50',
+                      'group flex items-center px-2 py-2 text-sm font-medium rounded-md'
+                    )}
+                    aria-current={item.current ? 'page' : undefined}
+                  >
+                    <item.icon
+                      className={classNames(
+                        item.current
+                          ? 'text-gray-500'
+                          : 'text-gray-400 group-hover:text-gray-500',
+                        'mr-3 flex-shrink-0 h-6 w-6'
+                      )}
+                      aria-hidden="true"
+                    />
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            </nav>
+          </div>
+        </div>
+        {/* Main column */}
+        <div className="lg:pl-64 flex flex-col">
+          {/* Search header */}
+          <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden">
+            <button
+              type="button"
+              className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500 lg:hidden"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <span className="sr-only">Open sidebar</span>
+              <MenuAlt1Icon className="h-6 w-6" aria-hidden="true" />
+            </button>
+            <div className="flex-1 flex justify-between px-4 sm:px-6 lg:px-8">
+              <div className="flex-1 flex"></div>
+              <div className="flex items-center">
+                {/* Profile dropdown */}
+                <Menu as="div" className="ml-3 relative">
+                  <div>
+                    <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                      <span className="sr-only">Open user menu</span>
+                      <img
+                        className="h-8 w-8 rounded-full"
+                        src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        alt=""
+                      />
+                    </Menu.Button>
+                  </div>
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
+                      <div className="py-1">
+                        <Menu.Item>
+                          {({ active }) => (
+                            <a
+                              href="#"
+                              className={classNames(
+                                active
+                                  ? 'bg-gray-100 text-gray-900'
+                                  : 'text-gray-700',
+                                'block px-4 py-2 text-sm'
+                              )}
+                            >
+                              View profile
+                            </a>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <a
+                              href="#"
+                              className={classNames(
+                                active
+                                  ? 'bg-gray-100 text-gray-900'
+                                  : 'text-gray-700',
+                                'block px-4 py-2 text-sm'
+                              )}
+                            >
+                              Settings
+                            </a>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <a
+                              href="#"
+                              className={classNames(
+                                active
+                                  ? 'bg-gray-100 text-gray-900'
+                                  : 'text-gray-700',
+                                'block px-4 py-2 text-sm'
+                              )}
+                            >
+                              Notifications
+                            </a>
+                          )}
+                        </Menu.Item>
+                      </div>
+                      <div className="py-1">
+                        <Menu.Item>
+                          {({ active }) => (
+                            <a
+                              href="#"
+                              className={classNames(
+                                active
+                                  ? 'bg-gray-100 text-gray-900'
+                                  : 'text-gray-700',
+                                'block px-4 py-2 text-sm'
+                              )}
+                            >
+                              Get desktop app
+                            </a>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <a
+                              href="#"
+                              className={classNames(
+                                active
+                                  ? 'bg-gray-100 text-gray-900'
+                                  : 'text-gray-700',
+                                'block px-4 py-2 text-sm'
+                              )}
+                            >
+                              Support
+                            </a>
+                          )}
+                        </Menu.Item>
+                      </div>
+                      <div className="py-1">
+                        <Menu.Item>
+                          {({ active }) => (
+                            <a
+                              href="#"
+                              className={classNames(
+                                active
+                                  ? 'bg-gray-100 text-gray-900'
+                                  : 'text-gray-700',
+                                'block px-4 py-2 text-sm'
+                              )}
+                            >
+                              Logout
+                            </a>
+                          )}
+                        </Menu.Item>
+                      </div>
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
               </div>
             </div>
           </div>
- */
+          <main className="flex-1">
+            {/* Page title & actions */}
+            <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
+              <nav className="flex" aria-label="Breadcrumb">
+                <ol role="list" className="flex items-center space-x-4">
+                  <li>
+                    <div>
+                      <Link
+                        to="/"
+                        className="text-purple-600 hover:text-purple-700"
+                      >
+                        <HomeIcon
+                          className="flex-shrink-0 h-5 w-5"
+                          aria-hidden="true"
+                        />
+                        <span className="sr-only">Home</span>
+                      </Link>
+                    </div>
+                  </li>
+                  {pages.map((page) => (
+                    <li key={page.name}>
+                      <div className="flex items-center">
+                        <ChevronRightIcon
+                          className="flex-shrink-0 h-5 w-5 text-purple-600"
+                          aria-hidden="true"
+                        />
+                        <Link
+                          to={page.href}
+                          className={
+                            page.current
+                              ? 'ml-4 text-sm font-medium text-purple-400'
+                              : 'ml-4 text-sm font-medium text-purple-600 hover:text-purple-700'
+                          }
+                        >
+                          {page.name}
+                        </Link>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+            </div>
+
+            {/* Pinned projects */}
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
+              <div className="mt-8 max-w-3xl mx-auto grid grid-cols-1 gap-6 sm:px-2 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
+                <div className="space-y-6 lg:col-start-1 lg:col-span-2 py-5">
+                  <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+                    <div className="px-4 py-5 sm:px-6">
+                      <h3 className="text-lg leading-6 font-medium text-gray-900">
+                        Order {encomenda.enco_num}
+                      </h3>
+                      <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                        Customer details and information.
+                      </p>
+                    </div>
+                    <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
+                      <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+                        <div className="sm:col-span-1">
+                          <dt className="text-sm font-medium text-gray-500">
+                            Name
+                          </dt>
+                          <dd className="mt-1 text-sm text-gray-900">
+                            {encomenda.enco_namepro} {encomenda.enco_nameapl}
+                          </dd>
+                        </div>
+                        <div className="sm:col-span-1">
+                          <dt className="text-sm font-medium text-gray-500">
+                            Phone
+                          </dt>
+                          <dd className="mt-1 text-sm text-gray-900">
+                            {encomenda.enco_telemovel}
+                          </dd>
+                        </div>
+                        <div className="sm:col-span-2">
+                          <dt className="text-sm font-medium text-gray-500">
+                            Email address
+                          </dt>
+                          <dd className="mt-1 text-sm text-gray-900">
+                            {encomenda.enco_email}
+                          </dd>
+                        </div>
+                        {encomenda.enco_morada === '' ? (
+                          <div></div>
+                        ) : (
+                          <div className="sm:col-span-1">
+                            <dt className="text-sm font-medium text-gray-500">
+                              Shipping address
+                            </dt>
+                            <dd className="mt-1 text-sm text-gray-900">
+                              <address className="not-italic">
+                                <span className="block">
+                                  {encomenda.enco_morada}
+                                </span>
+
+                                <span className="block">
+                                  {encomenda.enco_postal}
+                                  {', '}
+                                  {encomenda.enco_cidade}
+                                  {', '}
+                                  {encomenda.enco_distrito}
+                                </span>
+                              </address>
+                            </dd>
+                          </div>
+                        )}
+
+                        {/*<div className="sm:col-span-1">
+                          <dt className="text-sm font-medium text-gray-500">
+                            Shipping address
+                          </dt>
+                          <dd className="mt-1 text-sm text-gray-900">
+                            <address className="not-italic">
+                              <span className="block">Kristin Watson</span>
+                              <span className="block">7363 Cynthia Pass</span>
+                              <span className="block">Toronto, ON N3Y 4H8</span>
+                            </address>
+                          </dd>
+                        </div>*/}
+                      </dl>
+                    </div>
+                  </div>
+                  {encomenda.enco_estado === '1' ? (
+                    <div className="bg-white shadow overflow-hidden sm:rounded-lg ">
+                      <div className="px-4 py-5 sm:px-6">
+                        <h3 className="text-lg leading-6 font-medium text-gray-900">
+                          Summary
+                        </h3>
+                        <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                          Order details and information.
+                        </p>
+                      </div>
+                      <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
+                        <section
+                          aria-labelledby="summary-heading"
+                          className="  px-4 sm:px-6 lg:px-0  lg:bg-transparent lg:row-start-1 lg:col-start-2"
+                        >
+                          <p className="mt-1 max-w-2xl text-center text-md text-red-500">
+                            To view the Order Details, click the 'Processing
+                            Order' button
+                          </p>
+                          <div className="mt-6 flex flex-col justify-stretch">
+                            <button
+                              type="button"
+                              className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                              onClick={() => Processing()}
+                            >
+                              Processing Order
+                            </button>
+                          </div>
+                        </section>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-white shadow overflow-hidden sm:rounded-lg ">
+                      <div className="px-4 py-5 sm:px-6">
+                        <h3 className="text-lg leading-6 font-medium text-gray-900">
+                          Summary
+                        </h3>
+                        <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                          Order details and information.
+                        </p>
+                      </div>
+                      <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
+                        <section
+                          aria-labelledby="summary-heading"
+                          className="  px-4 sm:px-6 lg:px-0  lg:bg-transparent lg:row-start-1 lg:col-start-2"
+                        >
+                          <div className="max-w-2xl mx-auto px-4 lg:max-w-none lg:px-0 ">
+                            <h2
+                              id="summary-heading"
+                              className="text-lg leading-6 font-medium text-gray-900 "
+                            ></h2>
+
+                            <ul
+                              role="list"
+                              className="text-sm font-medium divide-y divide-gray-900 divide-opacity-10 pt-2"
+                            >
+                              {imagens.map((image, idx) => (
+                                <li
+                                  key={idx}
+                                  className="flex items-start py-6 space-x-4"
+                                >
+                                  <img
+                                    src={image.imag_caminho.slice(53)}
+                                    alt="Imagem Encomendada"
+                                    className="flex-none w-20 h-20 rounded-md object-center object-cover"
+                                  />
+
+                                  <div className="flex-auto space-y-1">
+                                    <h3 className="text-gray-900 italic">
+                                      {image.imag_name}
+                                    </h3>
+                                    {image.imag_download === true ? (
+                                      <p>
+                                        <span className="italic">Download</span>
+                                      </p>
+                                    ) : (
+                                      <p>
+                                        {'Size: '}
+                                        <span className="italic">
+                                          {image.imag_largura} {' x '}
+                                          {image.imag_altura}
+                                        </span>
+                                      </p>
+                                    )}
+
+                                    <p>
+                                      {'Quantity: '}
+                                      <span className="italic">
+                                        {image.quantity}
+                                      </span>
+                                    </p>
+                                  </div>
+                                  <p className="flex-none text-base font-medium text-gray-900">
+                                    {image.imag_price} €
+                                  </p>
+                                </li>
+                              ))}
+                            </ul>
+
+                            <dl className="text-sm font-medium space-y-6 border-t border-gray-900 border-opacity-10 pt-6">
+                              <div className="flex items-center justify-between">
+                                <dt>Subtotal</dt>
+                                <dd>{encomenda.enco_subtotal} €</dd>
+                              </div>
+                              {encomenda.enco_disname === '' ? (
+                                <div></div>
+                              ) : (
+                                <div className="flex items-center justify-between">
+                                  <dt>
+                                    Discount{' '}
+                                    <span className="italic">
+                                      ({encomenda.enco_disname})
+                                    </span>
+                                  </dt>
+                                  <dd>{encomenda.enco_disnum} %</dd>
+                                </div>
+                              )}
+
+                              <div className="flex items-center justify-between">
+                                <dt>
+                                  Shipping{' '}
+                                  <span className="italic">
+                                    ({encomenda.enco_shippingt})
+                                  </span>
+                                </dt>
+                                <dd>{encomenda.enco_shippingp} €</dd>
+                              </div>
+
+                              <div className="flex items-center justify-between border-t border-gray-900 border-opacity-10 text-gray-900v pt-6">
+                                <dt className="text-base">Total</dt>
+                                <dd className="text-base">
+                                  {encomenda.enco_total} €
+                                </dd>
+                              </div>
+                            </dl>
+                          </div>
+                        </section>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <section
+                  aria-labelledby="timeline-title"
+                  className="lg:col-start-3 lg:col-span-1"
+                >
+                  <div className="bg-white mt-5 px-4 py-5 shadow sm:rounded-lg sm:px-6">
+                    <h2
+                      id="timeline-title"
+                      className="text-lg font-medium text-gray-900"
+                    >
+                      Timeline
+                    </h2>
+
+                    {/* Activity Feed */}
+                    {flag === true ? (
+                      <div className="mt-6 flow-root">
+                        {encomenda.enco_estado === '4' ? (
+                          <div>
+                            <ul role="list" className="-mb-8">
+                              <div className="relative pb-8">
+                                <span
+                                  className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
+                                  aria-hidden="true"
+                                />
+                                <div className="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      className={classNames(
+                                        eventTypes.created.bgColorClass,
+                                        'h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white'
+                                      )}
+                                    >
+                                      <eventTypes.created.icon
+                                        className="w-5 h-5 text-white"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  </div>
+                                  <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                    <div className="pr-4">
+                                      <p className="text-sm text-gray-500">
+                                        Order Created{' '}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="text-left text-sm whitespace-nowrap text-gray-500 pt-1.5">
+                                    <time>
+                                      {encomenda.createdAt.slice(0, 10)}{' '}
+                                      {encomenda.createdAt.slice(11, 19)}
+                                    </time>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="relative pb-8">
+                                <span
+                                  className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
+                                  aria-hidden="true"
+                                />
+                                <div className="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      className={classNames(
+                                        eventTypes.processing.bgColorClass,
+                                        'h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white'
+                                      )}
+                                    >
+                                      <eventTypes.processing.icon
+                                        className="w-5 h-5 text-white"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  </div>
+                                  <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                    <div className="pr-4">
+                                      <p className="text-sm text-gray-500">
+                                        Processing Order{' '}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="text-left text-sm whitespace-nowrap text-gray-500 pt-1.5">
+                                    <time>
+                                      {encomenda.createdAt.slice(0, 10)}{' '}
+                                      {encomenda.createdAt.slice(11, 19)}
+                                    </time>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="relative pb-8">
+                                <span
+                                  className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
+                                  aria-hidden="true"
+                                />
+                                <div className="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      className={classNames(
+                                        eventTypes.sent.bgColorClass,
+                                        'h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white'
+                                      )}
+                                    >
+                                      <eventTypes.sent.icon
+                                        className="w-5 h-5 text-white"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  </div>
+                                  <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                    <div className="pr-4">
+                                      <p className="text-sm text-gray-500">
+                                        Order Sent{' '}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="text-left text-sm whitespace-nowrap text-gray-500 pt-1.5">
+                                    <time>
+                                      {encomenda.createdAt.slice(0, 10)}{' '}
+                                      {encomenda.createdAt.slice(11, 19)}
+                                    </time>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="relative pb-8">
+                                <div className="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      className={classNames(
+                                        eventTypes.completed.bgColorClass,
+                                        'h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white'
+                                      )}
+                                    >
+                                      <eventTypes.completed.icon
+                                        className="w-5 h-5 text-white"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  </div>
+                                  <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                    <div className="pr-4">
+                                      <p className="text-sm text-gray-500">
+                                        Order Delivered{' '}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="text-left text-sm whitespace-nowrap text-gray-500 pt-1.5">
+                                    <time>
+                                      {encomenda.createdAt.slice(0, 10)}{' '}
+                                      {encomenda.createdAt.slice(11, 19)}
+                                    </time>
+                                  </div>
+                                </div>
+                              </div>
+                            </ul>
+                          </div>
+                        ) : (
+                          <div></div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="mt-6 flow-root">
+                        {encomenda.enco_estado === '1' ? (
+                          <div>
+                            <ul role="list" className="-mb-8">
+                              <div className="relative pb-8">
+                                <div className="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      className={classNames(
+                                        eventTypes.created.bgColorClass,
+                                        'h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white'
+                                      )}
+                                    >
+                                      <eventTypes.created.icon
+                                        className="w-5 h-5 text-white"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  </div>
+                                  <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                    <div className="pr-4">
+                                      <p className="text-sm text-gray-500">
+                                        Order Created{' '}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="text-left text-sm whitespace-nowrap text-gray-500 pt-1.5">
+                                    <time>
+                                      {encomenda.createdAt.slice(0, 10)}{' '}
+                                      {encomenda.createdAt.slice(11, 19)}
+                                    </time>
+                                  </div>
+                                </div>
+                              </div>
+                            </ul>
+                          </div>
+                        ) : encomenda.enco_estado === '2' ? (
+                          <div>
+                            <ul role="list" className="-mb-8">
+                              <div className="relative pb-8">
+                                <span
+                                  className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
+                                  aria-hidden="true"
+                                />
+                                <div className="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      className={classNames(
+                                        eventTypes.created.bgColorClass,
+                                        'h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white'
+                                      )}
+                                    >
+                                      <eventTypes.created.icon
+                                        className="w-5 h-5 text-white"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  </div>
+                                  <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                    <div className="pr-4">
+                                      <p className="text-sm text-gray-500">
+                                        Order Created{' '}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="text-left text-sm whitespace-nowrap text-gray-500 pt-1.5">
+                                    <time>
+                                      {encomenda.createdAt.slice(0, 10)}{' '}
+                                      {encomenda.createdAt.slice(11, 19)}
+                                    </time>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="relative pb-8">
+                                <div className="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      className={classNames(
+                                        eventTypes.processing.bgColorClass,
+                                        'h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white'
+                                      )}
+                                    >
+                                      <eventTypes.processing.icon
+                                        className="w-5 h-5 text-white"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  </div>
+                                  <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                    <div className="pr-4">
+                                      <p className="text-sm text-gray-500">
+                                        Processing Order{' '}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="text-left text-sm whitespace-nowrap text-gray-500 pt-1.5">
+                                    <time>{encomenda.enco_processada}</time>
+                                  </div>
+                                </div>
+                              </div>
+                            </ul>
+                            <div className="mt-6 flex flex-col justify-stretch">
+                              <button
+                                type="button"
+                                className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                onClick={() => Sent()}
+                              >
+                                Order Sent
+                              </button>
+                            </div>
+                          </div>
+                        ) : encomenda.enco_estado === '3' ? (
+                          <div>
+                            <ul role="list" className="-mb-8">
+                              <div className="relative pb-8">
+                                <span
+                                  className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
+                                  aria-hidden="true"
+                                />
+                                <div className="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      className={classNames(
+                                        eventTypes.created.bgColorClass,
+                                        'h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white'
+                                      )}
+                                    >
+                                      <eventTypes.created.icon
+                                        className="w-5 h-5 text-white"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  </div>
+                                  <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                    <div className="pr-4">
+                                      <p className="text-sm text-gray-500">
+                                        Order Created{' '}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="text-left text-sm whitespace-nowrap text-gray-500 pt-1.5">
+                                    <time>
+                                      {encomenda.createdAt.slice(0, 10)}{' '}
+                                      {encomenda.createdAt.slice(11, 19)}
+                                    </time>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="relative pb-8">
+                                <span
+                                  className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
+                                  aria-hidden="true"
+                                />
+                                <div className="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      className={classNames(
+                                        eventTypes.processing.bgColorClass,
+                                        'h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white'
+                                      )}
+                                    >
+                                      <eventTypes.processing.icon
+                                        className="w-5 h-5 text-white"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  </div>
+                                  <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                    <div className="pr-4">
+                                      <p className="text-sm text-gray-500">
+                                        Processing Order{' '}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="text-left text-sm whitespace-nowrap text-gray-500 pt-1.5">
+                                    <time>{encomenda.enco_processada}</time>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="relative pb-8">
+                                <div className="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      className={classNames(
+                                        eventTypes.sent.bgColorClass,
+                                        'h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white'
+                                      )}
+                                    >
+                                      <eventTypes.sent.icon
+                                        className="w-5 h-5 text-white"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  </div>
+                                  <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                    <div className="pr-4">
+                                      <p className="text-sm text-gray-500">
+                                        Order Sent{' '}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="text-left text-sm whitespace-nowrap text-gray-500 pt-1.5">
+                                    <time>{encomenda.enco_enviada}</time>
+                                  </div>
+                                </div>
+                              </div>
+                            </ul>
+                          </div>
+                        ) : encomenda.enco_estado === '4' ? (
+                          <div>
+                            <ul role="list" className="-mb-8">
+                              <div className="relative pb-8">
+                                <span
+                                  className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
+                                  aria-hidden="true"
+                                />
+                                <div className="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      className={classNames(
+                                        eventTypes.created.bgColorClass,
+                                        'h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white'
+                                      )}
+                                    >
+                                      <eventTypes.created.icon
+                                        className="w-5 h-5 text-white"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  </div>
+                                  <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                    <div className="pr-4">
+                                      <p className="text-sm text-gray-500">
+                                        Order Created{' '}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="text-left text-sm whitespace-nowrap text-gray-500 pt-1.5">
+                                    <time>
+                                      {encomenda.createdAt.slice(0, 10)}{' '}
+                                      {encomenda.createdAt.slice(11, 19)}
+                                    </time>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="relative pb-8">
+                                <span
+                                  className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
+                                  aria-hidden="true"
+                                />
+                                <div className="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      className={classNames(
+                                        eventTypes.processing.bgColorClass,
+                                        'h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white'
+                                      )}
+                                    >
+                                      <eventTypes.processing.icon
+                                        className="w-5 h-5 text-white"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  </div>
+                                  <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                    <div className="pr-4">
+                                      <p className="text-sm text-gray-500">
+                                        Processing Order{' '}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="text-left text-sm whitespace-nowrap text-gray-500 pt-1.5">
+                                    <time>{encomenda.enco_processada}</time>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="relative pb-8">
+                                <span
+                                  className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
+                                  aria-hidden="true"
+                                />
+                                <div className="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      className={classNames(
+                                        eventTypes.sent.bgColorClass,
+                                        'h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white'
+                                      )}
+                                    >
+                                      <eventTypes.sent.icon
+                                        className="w-5 h-5 text-white"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  </div>
+                                  <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                    <div className="pr-4">
+                                      <p className="text-sm text-gray-500">
+                                        Order Sent{' '}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="text-left text-sm whitespace-nowrap text-gray-500 pt-1.5">
+                                    <time>{encomenda.enco_enviada}</time>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="relative pb-8">
+                                <div className="relative flex space-x-3">
+                                  <div>
+                                    <span
+                                      className={classNames(
+                                        eventTypes.completed.bgColorClass,
+                                        'h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white'
+                                      )}
+                                    >
+                                      <eventTypes.completed.icon
+                                        className="w-5 h-5 text-white"
+                                        aria-hidden="true"
+                                      />
+                                    </span>
+                                  </div>
+                                  <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                    <div className="pr-4">
+                                      <p className="text-sm text-gray-500">
+                                        Order Delivered{' '}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="text-left text-sm whitespace-nowrap text-gray-500 pt-1.5">
+                                    <time>{encomenda.enco_entregue}</time>
+                                  </div>
+                                </div>
+                              </div>
+                            </ul>
+                          </div>
+                        ) : (
+                          <div></div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </section>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </>
+  );
+}

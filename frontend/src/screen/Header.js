@@ -2,6 +2,7 @@ import { Fragment, useContext, useEffect, useState } from 'react';
 import { Dialog, Popover, Tab, Transition } from '@headlessui/react';
 import { CheckCircleIcon, TrashIcon } from '@heroicons/react/solid';
 import { RadioGroup } from '@headlessui/react';
+import { Watermark } from '@hirohe/react-watermark';
 import {
   MenuIcon,
   SearchIcon,
@@ -10,7 +11,7 @@ import {
   XIcon,
 } from '@heroicons/react/outline';
 import { Store } from '../Store';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import SignIn from './SignIn';
 
 const navigation = {
@@ -212,21 +213,11 @@ const navigation = {
 const products = [
   {
     id: 1,
-    name: 'Zip Tote Basket',
-    href: '#',
-    color: 'White and black',
-    price: '$140.00',
-    imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-03.jpg',
-    imageAlt:
-      'Front of zip tote bag with white canvas, black canvas straps and handle, and black zipper pulls.',
-  },
-  {
-    id: 2,
     name: 'Throwback Hip Bag',
     href: '#',
-    color: 'Salmon',
+    color: '210 (cm) x 210 (cm)',
     price: '$90.00',
+    quantity: 1,
     imageSrc:
       'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg',
     imageAlt:
@@ -234,80 +225,51 @@ const products = [
   },
   {
     id: 2,
-    name: 'Throwback Hip Bag',
+    name: 'Medium Stuff Satchel',
     href: '#',
-    color: 'Salmon',
-    price: '$90.00',
+    color: '210 (cm) x 210 (cm)',
+    price: '$32.00',
+    quantity: 1,
     imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg',
+      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-02.jpg',
     imageAlt:
-      'Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.',
+      'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
   },
   {
-    id: 2,
-    name: 'Throwback Hip Bag',
+    id: 3,
+    name: 'Medium Stuff Satchel',
     href: '#',
-    color: 'Salmon',
-    price: '$90.00',
+    color: '210 (cm) x 210 (cm)',
+    price: '$32.00',
+    quantity: 1,
     imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg',
+      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-02.jpg',
     imageAlt:
-      'Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.',
+      'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
   },
   {
-    id: 2,
-    name: 'Throwback Hip Bag',
+    id: 4,
+    name: 'Medium Stuff Satchel',
     href: '#',
-    color: 'Salmon',
-    price: '$90.00',
+    color: '210 (cm) x 210 (cm)',
+    price: '$32.00',
+    quantity: 1,
     imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg',
+      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-02.jpg',
     imageAlt:
-      'Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.',
+      'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
   },
   {
-    id: 2,
-    name: 'Throwback Hip Bag',
+    id: 5,
+    name: 'Medium Stuff Satchel',
     href: '#',
-    color: 'Salmon',
-    price: '$90.00',
+    color: '210 (cm) x 210 (cm)',
+    price: '$32.00',
+    quantity: 1,
     imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg',
+      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-02.jpg',
     imageAlt:
-      'Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.',
-  },
-  {
-    id: 2,
-    name: 'Throwback Hip Bag',
-    href: '#',
-    color: 'Salmon',
-    price: '$90.00',
-    imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg',
-    imageAlt:
-      'Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.',
-  },
-  {
-    id: 2,
-    name: 'Throwback Hip Bag',
-    href: '#',
-    color: 'Salmon',
-    price: '$90.00',
-    imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg',
-    imageAlt:
-      'Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.',
-  },
-  {
-    id: 2,
-    name: 'Throwback Hip Bag',
-    href: '#',
-    color: 'Salmon',
-    price: '$90.00',
-    imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg',
-    imageAlt:
-      'Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.',
+      'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
   },
   // More products...
 ];
@@ -351,19 +313,19 @@ export default function Header() {
 
   console.log(state);
 
-  useEffect(() => {
-    ctxDispatch({
-      type: 'METODO_ADD',
-
-      payload: selectedDeliveryMethod,
-    });
-  }, [selectedDeliveryMethod, ctxDispatch]);
-
   const subtotal = state.cart.cartItems.reduce(
     (partialSum, objectt) => partialSum + objectt.quantity * objectt.esc_price,
     0
   );
-
+  const subitem = state.cart.cartItems.reduce(
+    (partialSum, objectt) => partialSum + objectt.quantity,
+    0
+  );
+  const subitem2 = state.cart.cartItemsDownload.reduce(
+    (partialSum, objectt) => partialSum + objectt.quantity,
+    0
+  );
+  const totalitems = subitem + subitem2;
   const updateCartHandler = (image, quantityUpdate) => {
     console.log('MMMMMM');
     if (quantityUpdate < 1) {
@@ -381,6 +343,11 @@ export default function Header() {
     console.log(image);
     ctxDispatch({ type: 'CART_REMOVE_ITEM', payload: image });
   };
+  const removeImageHandler2 = (image) => {
+    console.log('tatatata');
+    console.log(image);
+    ctxDispatch({ type: 'CART_REMOVE_ITEM_DOWNLOAD', payload: image });
+  };
   return (
     <div>
       {/*----------------CART---------------------------*/}
@@ -390,509 +357,181 @@ export default function Header() {
           className="fixed z-10 inset-0 overflow-y-auto"
           onClose={setOpen2}
         >
-          <div
-            className="flex min-h-screen text-center sm:block sm:px-6 lg:px-8"
-            style={{ fontSize: 0 }}
-          >
+          <div className="absolute inset-0 overflow-hidden">
             <Transition.Child
               as={Fragment}
-              enter="ease-out duration-300"
+              enter="ease-in-out duration-500"
               enterFrom="opacity-0"
               enterTo="opacity-100"
-              leave="ease-in duration-200"
+              leave="ease-in-out duration-500"
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Dialog.Overlay className="hidden sm:block sm:fixed sm:inset-0 sm:bg-gray-500 sm:bg-opacity-75 sm:transition-opacity" />
+              <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
             </Transition.Child>
 
-            {/* This element is to trick the browser into centering the modal contents. */}
-            <span
-              className="hidden sm:inline-block sm:align-middle sm:h-screen"
-              aria-hidden="true"
-            >
-              &#8203;
-            </span>
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-105"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-105"
-            >
-              <div className="flex text-base text-left transform transition w-full sm:inline-block max-w-3xl sm:my-8 sm:align-middle">
-                <form className="w-full relative flex flex-col bg-white pt-6 pb-8 overflow-hidden sm:pb-6 sm:rounded-lg lg:py-8">
-                  <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8">
-                    <h2 className="text-lg font-medium text-gray-900">
-                      Shopping Cart
-                    </h2>
-                    <button
-                      type="button"
-                      className="text-gray-400 hover:text-gray-500"
-                      onClick={() => setOpen2(false)}
-                    >
-                      <span className="sr-only">Close</span>
-                      <XIcon className="h-6 w-6" aria-hidden="true" />
-                    </button>
-                  </div>
-
-                  <section aria-labelledby="cart-heading">
-                    <h2 id="cart-heading" className="sr-only">
-                      Items in your shopping cart
-                    </h2>
-
-                    <ul
-                      role="list"
-                      className="divide-y divide-gray-200 px-4 sm:px-6 lg:px-8"
-                    >
-                      {state.cart.cartItems.map((image, i) => (
-                        <li
-                          key={i}
-                          className="py-8 flex text-sm sm:items-center"
-                        >
-                          <img
-                            src={image.esc_caminho}
-                            alt="Imagem Escolhida"
-                            className="flex-none w-24 h-24 rounded-lg border border-gray-200 sm:w-32 sm:h-32"
-                          />
-                          <div className="ml-4 flex-auto grid gap-y-3 gap-x-5 grid-rows-1 grid-cols-1 items-start sm:ml-6 sm:flex sm:gap-0 sm:items-center">
-                            <div className="flex-auto row-end-1 sm:pr-6">
-                              <h3 className="font-medium text-gray-900">
-                                {image.esc_largura +
-                                  ' cm X ' +
-                                  image.esc_altura +
-                                  ' cm'}
-                              </h3>
-                              {/*<h3 className="font-medium text-gray-900">
-                                <a href={product.href}>{product.name}</a>
-                              </h3>
-                              <p className="mt-1 text-gray-500">
-                                {product.color}
-                              </p>*/}
-                            </div>
-                            <p className="row-end-2 row-span-2 font-medium text-gray-900 sm:ml-6 sm:order-1 sm:flex-none sm:w-1/3 sm:text-right">
-                              {image.esc_price} €
-                            </p>
-                            <div className="flex items-center sm:flex-none sm:block sm:text-center">
-                              {/*<label
-                                htmlFor={`quantity-${productIdx}`}
-                                className="sr-only"
-                              >
-                                Quantity, {product.name}
-                              </label>
-                              <select
-                                id={`quantity-${productIdx}`}
-                                name={`quantity-${productIdx}`}
-                                className="block max-w-full rounded-md border border-gray-300 py-1.5 text-base leading-5 font-medium text-gray-700 text-left shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                              >
-                                <option value={1}>1</option>
-                                <option value={2}>2</option>
-                                <option value={3}>3</option>
-                                <option value={4}>4</option>
-                                <option value={5}>5</option>
-                                <option value={6}>6</option>
-                                <option value={7}>7</option>
-                                <option value={8}>8</option>
-                              </select>*/}
-
-                              <div>
-                                <div className="flex flex-row  rounded-lg relative bg-transparent mt-1">
-                                  <button
-                                    onClick={() =>
-                                      updateCartHandler(
-                                        image,
-                                        image.quantity - 1
-                                      )
-                                    }
-                                    data-action="decrement"
-                                  >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      className="h-5 w-5"
-                                      viewBox="0 0 20 20"
-                                      fill="currentColor"
-                                    >
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z"
-                                        clipRule="evenodd"
-                                      />
-                                    </svg>
-                                  </button>
-
-                                  <p className="text-base font-medium text-gray-900 ml-2">
-                                    {image.quantity}
-                                  </p>
-
-                                  <button
-                                    onClick={() =>
-                                      updateCartHandler(
-                                        image,
-                                        image.quantity + 1
-                                      )
-                                    }
-                                    data-action="increment"
-                                    className="ml-2"
-                                  >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      className="h-5 w-5"
-                                      viewBox="0 0 20 20"
-                                      fill="currentColor"
-                                    >
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                                        clipRule="evenodd"
-                                      />
-                                    </svg>
-                                  </button>
-                                </div>
-                              </div>
-
-                              <button
-                                type="button"
-                                className="ml-4 font-medium text-indigo-600 hover:text-indigo-500 sm:ml-0 sm:mt-2"
-                                onClick={() => removeImageHandler(image)}
-                              >
-                                <span>Remove</span>
-                              </button>
-                            </div>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                    {state.cart.cartItems.length > 0 ? (
-                      <div className="px-4 sm:px-6 lg:px-8 mt-10 border-t border-gray-200 pt-10">
-                        <RadioGroup
-                          value={selectedDeliveryMethod}
-                          onChange={setSelectedDeliveryMethod}
-                        >
-                          <RadioGroup.Label className="text-lg font-medium text-gray-900">
-                            Delivery method
-                          </RadioGroup.Label>
-
-                          <div className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
-                            {deliveryMethods.map((deliveryMethod) => (
-                              <RadioGroup.Option
-                                key={deliveryMethod.id}
-                                value={deliveryMethod}
-                                className={({ checked, active }) =>
-                                  classNames(
-                                    checked
-                                      ? 'border-transparent'
-                                      : 'border-gray-300',
-                                    active ? 'ring-2 ring-indigo-500' : '',
-                                    'relative bg-white border rounded-lg shadow-sm p-4 flex cursor-pointer focus:outline-none'
-                                  )
-                                }
-                              >
-                                {({ checked, active }) => (
-                                  <>
-                                    <div className="flex-1 flex">
-                                      <div className="flex flex-col">
-                                        <RadioGroup.Label
-                                          as="span"
-                                          className="block text-sm font-medium text-gray-900"
-                                        >
-                                          {deliveryMethod.title}
-                                        </RadioGroup.Label>
-                                        <RadioGroup.Description
-                                          as="span"
-                                          className="mt-1 flex items-center text-sm text-gray-500"
-                                        >
-                                          {deliveryMethod.turnaround}
-                                        </RadioGroup.Description>
-                                        <RadioGroup.Description
-                                          as="span"
-                                          className="mt-6 text-sm font-medium text-gray-900"
-                                        >
-                                          Preço Total + {deliveryMethod.price} €
-                                        </RadioGroup.Description>
-                                      </div>
-                                    </div>
-                                    {checked ? (
-                                      <CheckCircleIcon
-                                        className="h-5 w-5 text-indigo-600"
-                                        aria-hidden="true"
-                                      />
-                                    ) : null}
-                                    <div
-                                      className={classNames(
-                                        active ? 'border' : 'border-2',
-                                        checked
-                                          ? 'border-indigo-500'
-                                          : 'border-transparent',
-                                        'absolute -inset-px rounded-lg pointer-events-none'
-                                      )}
-                                      aria-hidden="true"
-                                    />
-                                  </>
-                                )}
-                              </RadioGroup.Option>
-                            ))}
-                          </div>
-                        </RadioGroup>
-                      </div>
-                    ) : (
-                      <div></div>
-                    )}
-                  </section>
-
-                  <section
-                    aria-labelledby="summary-heading"
-                    className="mt-10 sm:px-6 lg:px-8"
-                  >
-                    {state.cart.cartItems.length > 0 ? (
-                      <div className="bg-gray-50 p-6 sm:p-8 sm:rounded-lg">
-                        <h2 id="summary-heading" className="sr-only">
-                          Order summary
-                        </h2>
-
-                        <div className="flow-root">
-                          <dl className="-my-4 text-sm divide-y divide-gray-200">
-                            {/*<div className="py-4 flex items-center justify-between">
-                              <dt className="text-gray-600">Subtotal</dt>
-                              <dd className="font-medium text-gray-900">
-                                ${subtotal}
-                              </dd>
-                            </div>
-                            <div className="py-4 flex items-center justify-between">
-                              <dt className="text-gray-600">Shipping</dt>
-                              <dd className="font-medium text-gray-900">
-                                ${subtotal > 0 ? 5 : 0}
-                              </dd>
-                            </div>
-                            <div className="py-4 flex items-center justify-between">
-                              <dt className="text-gray-600">Tax</dt>
-                              <dd className="font-medium text-gray-900">
-                                ${subtotal > 0 ? 5 : 0}
-                              </dd>
-                            </div>*/}
-
-                            <div className="py-4 flex items-center justify-between">
-                              <dt className="text-base font-medium text-gray-900">
-                                Order total
-                              </dt>
-                              <dd className="text-base font-medium text-gray-900">
-                                $
-                                {subtotal > 0
-                                  ? subtotal + selectedDeliveryMethod.price
-                                  : 0}
-                              </dd>
-                            </div>
-                          </dl>
+            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+              <Transition.Child
+                as={Fragment}
+                enter="transform transition ease-in-out duration-500 sm:duration-700"
+                enterFrom="translate-x-full"
+                enterTo="translate-x-0"
+                leave="transform transition ease-in-out duration-500 sm:duration-700"
+                leaveFrom="translate-x-0"
+                leaveTo="translate-x-full"
+              >
+                <div className="pointer-events-auto w-screen max-w-xs">
+                  <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
+                    <div className="flex-1 overflow-y-auto py-6 px-4 sm:px-6">
+                      <div className="flex items-start justify-between">
+                        <Dialog.Title className="text-lg font-medium text-gray-900">
+                          {' '}
+                          Shopping cart{' '}
+                        </Dialog.Title>
+                        <div className="ml-3 flex h-7 items-center">
+                          <button
+                            type="button"
+                            className="-m-2 p-2 text-gray-400 hover:text-gray-500"
+                            onClick={() => setOpen2(false)}
+                          >
+                            <span className="sr-only">Close panel</span>
+                            <XIcon className="h-6 w-6" aria-hidden="true" />
+                          </button>
                         </div>
                       </div>
-                    ) : (
-                      <div>
-                        <h1 className="text-lg font-medium text-red-600">
-                          O seu carrinho de compras está vazio!{' '}
-                        </h1>
-                      </div>
-                    )}
-                  </section>
 
-                  <div className="mt-8 flex justify-end px-4 sm:px-6 lg:px-8">
-                    {subtotal > 0 ? (
-                      <button
-                        type="submit"
-                        className="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500"
-                        onClick={() => {
-                          navigate('/checkout');
-                        }}
-                      >
-                        Continue to Payment
-                      </button>
-                    ) : (
-                      <div></div>
-                    )}
+                      <div className="mt-8">
+                        <div className="flow-root">
+                          <ul className="-my-6 divide-y divide-gray-200">
+                            {state.cart.cartItems.map((image, idx) => (
+                              <li key={idx} className="flex py-4">
+                                <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                  <Watermark text="Mark" opacity="0.5">
+                                    <img
+                                      src={image.esc_caminho}
+                                      alt="Imagem Escolhida"
+                                      className="h-full w-full object-cover object-center"
+                                    />
+                                  </Watermark>
+                                </div>
+
+                                <div className="ml-4 flex flex-1 flex-col">
+                                  <div>
+                                    <div className="flex justify-between text-base font-medium text-gray-900"></div>
+                                    <p className="mt-1 text-sm text-gray-500">
+                                      Sent Home: {image.esc_largura} (cm) x{' '}
+                                      {image.esc_altura} (cm)
+                                    </p>
+                                  </div>
+
+                                  <div className="flex flex-1 items-end justify-between text-sm">
+                                    <p className="text-gray-500">
+                                      Qty {image.quantity}
+                                    </p>
+
+                                    <div className="flex flex-1 items-end pl-4">
+                                      <button
+                                        type="button"
+                                        className="font-medium text-red-500 hover:text-red-900"
+                                        onClick={() => {
+                                          removeImageHandler(image);
+                                        }}
+                                      >
+                                        Remove
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </li>
+                            ))}
+                            {state.cart.cartItemsDownload.map((image2, idx) => (
+                              <li key={idx} className="flex py-4">
+                                <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                  <Watermark text="Mark" opacity="0.5">
+                                    <img
+                                      src={image2.esc_caminho}
+                                      alt="Imagem Escolhida"
+                                      className="h-full w-full object-cover object-center"
+                                    />
+                                  </Watermark>
+                                </div>
+
+                                <div className="ml-4 flex flex-1 flex-col">
+                                  <div>
+                                    <div className="flex justify-between text-base font-medium text-gray-900"></div>
+                                    <p className="mt-1 text-sm text-gray-500">
+                                      Download
+                                    </p>
+                                  </div>
+
+                                  <div className="flex flex-1 items-end justify-between text-sm">
+                                    <p className="text-gray-500">
+                                      Qty {image2.quantity}
+                                    </p>
+
+                                    <div className="flex flex-1 items-end pl-4">
+                                      <button
+                                        type="button"
+                                        className="font-medium text-red-500 hover:text-red-900"
+                                        onClick={() => {
+                                          removeImageHandler2(image2);
+                                        }}
+                                      >
+                                        Remove
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-gray-200 py-6 px-4 sm:px-6">
+                      <div className="mt-1">
+                        <Link
+                          to="/checkout/cart"
+                          className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                          onClick={() => setOpen2(false)}
+                        >
+                          Checkout
+                        </Link>
+                      </div>
+                      <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
+                        <p>
+                          or{' '}
+                          <button
+                            type="button"
+                            className="font-medium text-indigo-600 hover:text-indigo-500"
+                            onClick={() => setOpen2(false)}
+                          >
+                            Continue Shopping
+                            <span aria-hidden="true"> &rarr;</span>
+                          </button>
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </form>
-              </div>
-            </Transition.Child>
+                </div>
+              </Transition.Child>
+            </div>
           </div>
         </Dialog>
       </Transition.Root>
       {/*------------HEADER-----------------------------*/}
       <div className="bg-white">
         {/* Mobile menu */}
-        <Transition.Root show={open} as={Fragment}>
-          <Dialog
-            as="div"
-            className="fixed inset-0 flex z-40 lg:hidden"
-            onClose={setOpen}
-          >
-            <Transition.Child
-              as={Fragment}
-              enter="transition-opacity ease-linear duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="transition-opacity ease-linear duration-300"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-25" />
-            </Transition.Child>
-
-            <Transition.Child
-              as={Fragment}
-              enter="transition ease-in-out duration-300 transform"
-              enterFrom="-translate-x-full"
-              enterTo="translate-x-0"
-              leave="transition ease-in-out duration-300 transform"
-              leaveFrom="translate-x-0"
-              leaveTo="-translate-x-full"
-            >
-              <div className="relative max-w-xs w-full bg-white shadow-xl pb-12 flex flex-col overflow-y-auto">
-                <div className="px-4 pt-5 pb-2 flex">
-                  <button
-                    type="button"
-                    className="-m-2 p-2 rounded-md inline-flex items-center justify-center text-gray-400"
-                    onClick={() => setOpen(false)}
-                  >
-                    <span className="sr-only">Close menu</span>
-                    <XIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
-                </div>
-
-                {/* Links */}
-                <Tab.Group as="div" className="mt-2">
-                  <div className="border-b border-gray-200">
-                    <Tab.List className="-mb-px flex px-4 space-x-8">
-                      {navigation.categories.map((category) => (
-                        <Tab
-                          key={category.name}
-                          className={({ selected }) =>
-                            classNames(
-                              selected
-                                ? 'text-indigo-600 border-indigo-600'
-                                : 'text-gray-900 border-transparent',
-                              'flex-1 whitespace-nowrap py-4 px-1 border-b-2 text-base font-medium'
-                            )
-                          }
-                        >
-                          {category.name}
-                        </Tab>
-                      ))}
-                    </Tab.List>
-                  </div>
-                  <Tab.Panels as={Fragment}>
-                    {navigation.categories.map((category) => (
-                      <Tab.Panel
-                        key={category.name}
-                        className="pt-10 pb-8 px-4 space-y-10"
-                      >
-                        <div className="space-y-4">
-                          {category.featured.map((item, itemIdx) => (
-                            <div
-                              key={itemIdx}
-                              className="group relative aspect-w-1 aspect-h-1 rounded-md bg-gray-100 overflow-hidden"
-                            >
-                              <img
-                                src={item.imageSrc}
-                                alt={item.imageAlt}
-                                className="object-center object-cover group-hover:opacity-75"
-                              />
-                              <div className="flex flex-col justify-end">
-                                <div className="p-4 bg-white bg-opacity-60 text-base sm:text-sm">
-                                  <a
-                                    href={item.href}
-                                    className="font-medium text-gray-900"
-                                  >
-                                    <span
-                                      className="absolute inset-0"
-                                      aria-hidden="true"
-                                    />
-                                    {item.name}
-                                  </a>
-                                  <p
-                                    aria-hidden="true"
-                                    className="mt-0.5 text-gray-700 sm:mt-1"
-                                  >
-                                    Shop now
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                        {category.sections.map((column, columnIdx) => (
-                          <div key={columnIdx} className="space-y-10">
-                            {column.map((section) => (
-                              <div key={section.name}>
-                                <p
-                                  id={`${category.id}-${section.id}-heading-mobile`}
-                                  className="font-medium text-gray-900"
-                                >
-                                  {section.name}
-                                </p>
-                                <ul
-                                  role="list"
-                                  aria-labelledby={`${category.id}-${section.id}-heading-mobile`}
-                                  className="mt-6 flex flex-col space-y-6"
-                                >
-                                  {section.items.map((item) => (
-                                    <li key={item.name} className="flow-root">
-                                      <a
-                                        href={item.href}
-                                        className="-m-2 p-2 block text-gray-500"
-                                      >
-                                        {item.name}
-                                      </a>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            ))}
-                          </div>
-                        ))}
-                      </Tab.Panel>
-                    ))}
-                  </Tab.Panels>
-                </Tab.Group>
-
-                <div className="border-t border-gray-200 py-6 px-4 space-y-6">
-                  {navigation.pages.map((page) => (
-                    <div key={page.name} className="flow-root">
-                      <a
-                        href={page.href}
-                        className="-m-2 p-2 block font-medium text-gray-900"
-                      >
-                        {page.name}
-                      </a>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="border-t border-gray-200 py-6 px-4">
-                  <a href="#" className="-m-2 p-2 flex items-center">
-                    <img
-                      src="https://tailwindui.com/img/flags/flag-canada.svg"
-                      alt=""
-                      className="w-5 h-auto block flex-shrink-0"
-                    />
-                    <span className="ml-3 block text-base font-medium text-gray-900">
-                      CAD
-                    </span>
-                    <span className="sr-only">, change currency</span>
-                  </a>
-                </div>
-              </div>
-            </Transition.Child>
-          </Dialog>
-        </Transition.Root>
 
         {/*----------------HEADER--------------------------*/}
 
         <header className="relative bg-white">
           <nav
             aria-label="Top"
-            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-indigo-500"
           >
-            <div className="border-b border-gray-200">
+            <div className="">
               <div className="h-16 flex items-center justify-between">
                 {/*<div className="flex-1 flex items-center lg:hidden">
                 <button
@@ -1099,9 +738,9 @@ export default function Header() {
 
                   {/* Account */}
                   <button
-                    className="p-2 text-gray-400 hover:text-gray-500 lg:ml-4"
+                    className="p-2 text-indigo-500 hover:text-indigo-900 lg:ml-4"
                     onClick={() => {
-                      navigate('/singinn');
+                      navigate('/signin');
                     }}
                   >
                     <span className="sr-only">Account</span>
@@ -1115,15 +754,11 @@ export default function Header() {
                       onClick={() => setOpen2(true)}
                     >
                       <ShoppingBagIcon
-                        className="flex-shrink-0 h-6 w-6 text-gray-400 group-hover:text-gray-500"
+                        className="flex-shrink-0 h-6 w-6 text-indigo-500 group-hover:text-indigo-900"
                         aria-hidden="true"
                       />
-                      <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
-                        {state.cart.cartItems.reduce(
-                          (partialSum, objectt) =>
-                            partialSum + objectt.quantity,
-                          0
-                        )}
+                      <span className="ml-2 text-sm font-medium text-indigo-500 group-hover:text-indigo-900">
+                        {totalitems}
                       </span>
                       <span className="sr-only">items in cart, view bag</span>
                     </button>

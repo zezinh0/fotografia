@@ -3,6 +3,8 @@ import { PlusIcon } from '@heroicons/react/solid';
 import { clientes } from '../data2';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import { PlusSmIcon as PlusSmIconSolid } from '@heroicons/react/solid';
+import { PlusSmIcon as PlusSmIconOutline } from '@heroicons/react/outline';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -60,115 +62,77 @@ export default function ListofProject(props) {
     fetchData2(id);
     fetchData(id);
   };
+  //Código para Partilhar    	Nome do Evento	    Data da Criação do Projeto
   return (
-    <div>
-      {eventos.length > 0 ? (
-        <div className="flex flex-col">
-          <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div className="py-4 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-              <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        Código para Partilhar
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        Nome do Evento
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        Data da Criação do Projeto
-                      </th>
-
-                      <th scope="col" className="relative px-6 py-3"></th>
-
-                      <th scope="col" className="relative px-6 py-3"></th>
-                      <th scope="col" className="relative px-6 py-3"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {eventos.map((evento, personIdx) => (
-                      <tr
-                        key={evento._id}
-                        className={
-                          personIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                        }
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {evento.grupo_codigo.toUpperCase()}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {evento.grupo_name}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {evento.createdAt.slice(0, 10)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"></td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <a
-                            href="#"
-                            className="text-red-600 hover:text-red-900"
-                            onClick={() => deletegrupo(evento._id)}
-                          >
-                            Remove
-                          </a>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <Link
-                            to={`/editgrupo/${evento._id}`}
-                            className="text-blue-500 hover:text-blue-900"
-                          >
-                            Edit
-                          </Link>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="flex flex-col">
-          <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div className="py-4 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-              <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        Código para Partilhar
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <p
-                      className={
-                        'bg-white px-6 py-2 whitespace-nowrap  text-red-500 '
-                      }
-                    >
-                      Sem Eventos
-                    </p>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    <table className="min-w-full divide-y divide-gray-300">
+      <thead className="bg-gray-50">
+        <tr>
+          <th
+            scope="col"
+            className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+          >
+            Code to Share
+          </th>
+          <th
+            scope="col"
+            className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell"
+          >
+            Event Name
+          </th>
+          <th
+            scope="col"
+            className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sm:table-cell"
+          >
+            Date
+          </th>
+          <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
+            <span className="sr-only">Remove</span>
+          </th>
+          <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
+            <span className="sr-only">Edit</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-gray-200 bg-white">
+        {eventos.map((evento) => (
+          <tr key={evento._id}>
+            <td className="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 text-blue-500 sm:w-auto sm:max-w-none sm:pl-6">
+              {evento.grupo_codigo.toUpperCase()}
+              <dl className="font-normal lg:hidden">
+                <dt className="sr-only">Event Name</dt>
+                <dd className="mt-1 truncate text-gray-700">
+                  {evento.grupo_name}
+                </dd>
+                <dt className="sr-only sm:hidden">Date</dt>
+                <dd className="mt-1 truncate text-gray-500 sm:hidden">
+                  <time> {evento.createdAt.slice(0, 10)}</time>
+                </dd>
+              </dl>
+            </td>
+            <td className="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
+              {evento.grupo_name}
+            </td>
+            <td className="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell">
+              <time> {evento.createdAt.slice(0, 10)}</time>
+            </td>
+            <td className="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+              <a href="#" className="text-red-600 hover:text-red-900">
+                Remove
+                <span className="sr-only">, {evento.grupo_name}</span>
+              </a>
+            </td>
+            <td className="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+              <Link
+                to={`/editgrupo/${evento._id}`}
+                className="text-blue-600 hover:text-blue-900"
+              >
+                Edit
+                <span className="sr-only">,{evento.grupo_name}</span>
+              </Link>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }

@@ -6,6 +6,9 @@ import asyncHandler from 'express-async-handler';
 import Imagens from '../models/modelImagens.js';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
+import multer from 'multer';
+import crypto from 'crypto';
+
 const imagensRouter = express.Router();
 
 imagensRouter.get(
@@ -28,22 +31,22 @@ imagensRouter.get(
 
     if (imagens) {
       const grupo = await Grupo.find({ _id: req.params.grupo_id });
-      let array = [];
-      let data = grupo[0].grupo_medidas.split(',');
-      for (let i = 0; i < data.length - 1; i++) {
-        array.push({
-          largura: data[i].split('-')[0],
-          altura: data[i].split('-')[1],
-          price: data[i].split('-')[2],
-          id: data[i].split('-')[3],
-        });
-      }
-      console.log(array);
+      console.log('111111111111111');
+      console.log(grupo[0]);
+      console.log('222222222222222');
+      console.log(grupo[0].grupo_medidas);
       let enviar = [];
       imagens.map((element) => {
         //console.log('P1');
-        //console.log(element);
-        enviar.push({ ...element._doc, imag_medidas: array });
+        console.log(element);
+
+        enviar.push({
+          ...element._doc,
+          imag_medidas: grupo[0].grupo_medidas,
+          grupo_download: grupo[0].grupo_download,
+          grupo_download_price: grupo[0].grupo_download_price,
+          grupo_download_id: grupo[0].grupo_download_id,
+        });
       });
 
       console.log(enviar);
@@ -54,34 +57,118 @@ imagensRouter.get(
   })
 );
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'C:/Users/José Costa/Documents/gallery/frontend/public/images2/');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = crypto.createHmac('sha256', uuidv4()).digest('hex');
+    cb(null, uniqueSuffix);
+  },
+});
+
+const multi_upload = multer({
+  storage,
+}).array('uploadImages', 3);
+
+imagensRouter.post('/upload', (req, res) => {
+  console.log('opopopopopopopopopo');
+
+  multi_upload(req, res, async function (err) {
+    for (const element of req.files) {
+      {
+        console.log('YYYYYYYYYYYYY');
+        console.log(element);
+        await Imagens.create({
+          imag_caminho: element.destination + element.filename,
+          imag_name: element.originalname,
+          grupo_id: req.body.grupo,
+          imag_id: element.filename,
+        });
+      }
+    }
+    //multer error
+    if (err instanceof multer.MulterError) {
+      console.log(err);
+      res
+        .status(500)
+        .send({
+          error: { msg: `multer uploading error: ${err.message}` },
+        })
+        .end();
+      return;
+    } else if (err) {
+      //unknown error
+      if (err.name == 'ExtensionError') {
+        res
+          .status(413)
+          .send({ error: { msg: `${err.message}` } })
+          .end();
+      } else {
+        res
+          .status(500)
+          .send({ error: { msg: `unknown uploading error: ${err.message}` } })
+          .end();
+      }
+      return;
+    }
+    res.status(200).send('file uploaded');
+  });
+});
+{
+  /*
 imagensRouter.post('/upload', async (req, res) => {
-  if (req.files === null) {
-    return res.status(400).json({ msg: 'No file uploaded' });
-  }
+  multi_upload(req, res, function (err) {
+    console.log('FICHEIROS');
+    console.log(req.files);
+    //multer error
+    if (err instanceof multer.MulterError) {
+      console.log(err);
+      res
+        .status(500)
+        .send({
+          error: { msg: `multer uploading error: ${err.message}` },
+        })
+        .end();
+      return;
+    } else if (err) {
+      //unknown error
+      if (err.name == 'ExtensionError') {
+        res
+          .status(413)
+          .send({ error: { msg: `${err.message}` } })
+          .end();
+      } else {
+        res
+          .status(500)
+          .send({ error: { msg: `unknown uploading error: ${err.message}` } })
+          .end();
+      }
+      return;
+    }
+    res.status(200).send('file uploaded');
+  });
 
-  const files = req.files.file;
-  console.log('files');
-  console.log(files);
-  console.log('1111111111');
-
-  try {
-    let imag_id = uuidv4();
-    let caminho = `C:/Users/José Costa/Documents/gallery/frontend/public/images2/${imag_id}`;
-    await Imagens.create({
-      imag_caminho: caminho,
-      imag_name: files.name,
-      grupo_id: req.body.grupo,
-      imag_id: imag_id,
-    });
-    files.mv(caminho);
-  } catch (err) {
-    return res.status(500).send(err);
-  }
+  
+    try {
+      let imag_id = uuidv4();
+      let caminho = `C:/Users/José Costa/Documents/gallery/frontend/public/images2/${imag_id}`;
+      await Imagens.create({
+        imag_caminho: caminho,
+        imag_name: files.name,
+        grupo_id: req.body.grupo,
+        imag_id: imag_id,
+      });
+      files.mv(caminho);
+    } catch (err) {
+      return res.status(500).send(err);
+    }
+    
 
   console.log('Ok');
-
-  res.json('Upload Tooal');
 });
+*/
+}
 
 imagensRouter.delete(
   '/deleteimagensid/:_id',

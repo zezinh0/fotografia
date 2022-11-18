@@ -1,86 +1,51 @@
 import Footer from './screen/Footer';
 import Header from './screen/Header';
 import ImagesList from './screen/ImagesList';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Code from './screen/Code';
 import Checkout from './screen/Checkout';
+
+import React from 'react';
+
+import Dasbord2 from './screen/Dasbord2';
+import CheckoutCart from './screen/CheckoutCart';
+import CheckoutShipping from './screen/CheckoutShipping';
+import CheckoutPayment from './screen/CheckoutPayment';
+import Sucess from './screen/PaymentSucess';
 import DashbordClient from './screen/DashbordClient';
-
-import React, { useEffect } from 'react';
-import { Fragment, useState } from 'react';
-import { Disclosure, Menu, Transition } from '@headlessui/react';
-
-import {
-  BellIcon,
-  CalendarIcon,
-  ChartBarIcon,
-  FolderIcon,
-  HomeIcon,
-  InboxIcon,
-  MenuAlt2Icon,
-  UsersIcon,
-  XIcon,
-  MenuIcon,
-} from '@heroicons/react/outline';
-import { SearchIcon, PlusIcon } from '@heroicons/react/solid';
-import ProfileClient from './Components/ProfileClient';
-import MenuSliderClient from './Components/MenuSliderClient';
 import Project from './screen/Project';
 import ImagesofProject from './Components/ImagesofProject';
-import Orders from './screen/Orders';
-import { clientes } from './data2';
 import CreateProject from './screen/CreateProject';
 import EachOrder from './screen/EachOrder';
 import EditGrupo from './screen/EditGrupo';
+import Orders from './screen/Orders';
 import SignIn from './screen/SignIn';
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
-import axios from 'axios';
-import HeaderPho from './screen/HeaderPho';
-
-const user = {
-  name: 'Tom Cook',
-  email: 'tom@example.com',
-  imageUrl:
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-};
-const navigation = [
-  {
-    name: 'Dashboard',
-    href: '/',
-    icon: HomeIcon,
-    current: true,
-  },
-  //{ name: 'Team', href: '#', icon: UsersIcon, current: false },
-  { name: 'Projects', href: '/project', icon: FolderIcon, current: false },
-  { name: 'Pedidos', href: '/orders', icon: CalendarIcon, current: false },
-  //{ name: 'Documents', href: '#', icon: InboxIcon, current: false },
-  //{ name: 'Reports', href: '#', icon: ChartBarIcon, current: false },
-];
-const userNavigation = [
-  { name: 'Your Profile', href: '#' },
-  { name: 'Settings', href: '#' },
-  { name: 'Sign out', href: '#' },
-];
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
-
+import SignUp from './screen/SignUp';
 function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
   return (
     <BrowserRouter>
       {/* Replace with your content */}
 
       <Routes>
-        <Route path="/dashbordclient" element={<DashbordClient />} />
+        <Route path="/" element={<Code />} />
+
+        <Route path="/imagelist" element={<ImagesList />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/checkout/shipping" element={<CheckoutShipping />} />
+        <Route path="/checkout/cart" element={<CheckoutCart />} />
+        <Route path="/checkout/payment" element={<CheckoutPayment />} />
+        <Route path="/dasbord2" element={<Dasbord2 />} />
+        <Route path="/sucess" element={<Sucess />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+
+        <Route path="/dashbord" element={<DashbordClient />} />
+        <Route path="/d" element={<Dasbord2 />} />
         <Route path="/project" element={<Project />} />
         <Route path="/imagesofproject" element={<ImagesofProject />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/createproject" element={<CreateProject />} />
-        <Route path="/eachorder/:idd" element={<EachOrder />} />
+        <Route path="/eachorder/:id" element={<EachOrder />} />
         <Route path="/editgrupo/:id" element={<EditGrupo />} />
       </Routes>
 
@@ -103,17 +68,44 @@ function App() {
             <Route path="/checkout" element={<Checkout />} />
 
 
-            <Route path="/" element={<DashbordClient />} />
-                <Route path="/project" element={<Project />} />
-                <Route path="/imagesofproject" element={<ImagesofProject />} />
-                <Route path="/orders" element={<Orders />} />
-                <Route path="/createproject" element={<CreateProject />} />
-                <Route path="/eachorder/:id" element={<EachOrder />} />
-                <Route path="/editgrupo/:id" element={<EditGrupo />} />
-          </Routes>
+            <Routes>
+        <Route path="/" element={<DashbordClient />} />
+        <Route path="/d" element={<Dasbord2 />} />
+        <Route path="/project" element={<Project />} />
+        <Route path="/imagesofproject" element={<ImagesofProject />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/createproject" element={<CreateProject />} />
+        <Route path="/eachorder/:id" element={<EachOrder />} />
+        <Route path="/editgrupo/:id" element={<EditGrupo />} />
+      </Routes>
         </main>
         <Footer />
       </div>
+}
+
+
+{/*
+
+<BrowserRouter>
+      
+      <Header />
+      <Routes>
+        <Route path="/" element={<Code />} />
+
+        <Route path="/imagelist" element={<ImagesList />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/checkout/shipping" element={<CheckoutShipping />} />
+        <Route path="/checkout/cart" element={<CheckoutCart />} />
+        <Route path="/checkout/payment" element={<CheckoutPayment />} />
+        <Route path="/dasbord2" element={<Dasbord2 />} />
+        <Route path="/sucess" element={<Sucess />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignIn />} />
+      </Routes>
+      <Footer />
+      
+    </BrowserRouter>
+*/
 }
 
 {

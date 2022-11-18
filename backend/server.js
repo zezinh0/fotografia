@@ -8,9 +8,13 @@ import imagensRouter from './routes/imagenssRoutes.js';
 import clientRouter from './routes/clientRoutes.js';
 import encomendaRouter from './routes/encomendaRoutes.js';
 import Stripe from 'stripe';
-
+import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 const app = express();
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(fileUpload());
+app.use(cookieParser());
 dotenv.config();
 
 app.use('/api/seed', seedRouter);

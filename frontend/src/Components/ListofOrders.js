@@ -1,11 +1,14 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { PlusSmIcon as PlusSmIconSolid } from '@heroicons/react/solid';
+import { PlusSmIcon as PlusSmIconOutline } from '@heroicons/react/outline';
 
 export default function ListofOrders(props) {
-  const encomendas = props.encomendass;
+  const encomendass = props.encomendass;
   console.log('yyyyy');
-  console.log(encomendas);
-  console.log(encomendas);
+  console.log('yyyyy');
+  console.log(props.encomendass);
+  console.log(encomendass);
 
   {
     /*
@@ -18,144 +21,96 @@ export default function ListofOrders(props) {
 */
   }
   return (
-    <div>
-      {encomendas.length > 0 ? (
-        <div className="py-5 flex flex-col">
-          {encomendas[0].map((encomenda, idx) => (
-            <div key={idx} className="py-5 flex flex-col">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-                <h1 className="text-1xl font-semibold text-gray-900">
-                  Código do Evento: {encomenda.grupo_codigo}
-                </h1>
-              </div>
-              <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div className="py-10 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                  <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Número da Encomenda
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Nome do Evento
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Data da Encomenda
-                          </th>
+    <table className="min-w-full divide-y divide-gray-300">
+      <thead className="bg-gray-50">
+        <tr>
+          <th
+            scope="col"
+            className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+          >
+            Order Number
+          </th>
+          <th
+            scope="col"
+            className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell"
+          >
+            Amount
+          </th>
+          <th
+            scope="col"
+            className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sm:table-cell"
+          >
+            Date
+          </th>
 
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Total da Encomenda{' '}
-                          </th>
+          <th
+            scope="col"
+            className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sm:table-cell"
+          >
+            State
+          </th>
+          <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
+            <span className="sr-only">Details</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-gray-200 bg-white">
+        {encomendass.map((encomenda) => (
+          <tr key={encomenda._id}>
+            <td className="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 text-blue-500 sm:w-auto sm:max-w-none sm:pl-6">
+              <Link
+                to={`/eachorder/${encomenda._id}`}
+                className="text-blue-600 hover:text-blue-900"
+              >
+                {encomenda.enco_num.toUpperCase()}
+              </Link>
 
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Método da Encomenda
-                          </th>
-                          <th scope="col" className="relative px-6 py-3"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {encomenda.enco.length > 0 ? (
-                          encomenda.enco.map((elemento, i) => (
-                            <tr
-                              key={i}
-                              className={
-                                i % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                              }
-                            >
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {elemento.enco_num}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {encomenda.grupo_name}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {elemento.createdAt.slice(0, 10)}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {elemento.enco_preco} €
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {elemento.enco_metodoEt}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <Link
-                                  to={`/eachorder/${elemento._id}`}
-                                  className="text-blue-500 hover:text-blue-900"
-                                >
-                                  Edit
-                                </Link>
-                              </td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr
-                            className={2 % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
-                          >
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-red-500">
-                              Sem Encomendas
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"></td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"></td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"></td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"></td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"></td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col">
-          <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div className="py-4 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-              <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        Número da Encomenda
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <p
-                      className={
-                        'bg-white px-6 py-2 whitespace-nowrap  text-red-500 '
-                      }
-                    >
-                      Sem Ecomendas
-                    </p>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+              <dl className="font-normal lg:hidden">
+                <dt className="sr-only">Total</dt>
+                <dd className="mt-1 truncate text-gray-500 ">
+                  {encomenda.enco_total} €
+                </dd>
+                <dt className="sr-only sm:hidden">Date</dt>
+                <dd className="mt-1 truncate text-gray-500 sm:hidden">
+                  <time> {encomenda.createdAt.slice(0, 10)}</time>
+                </dd>
+              </dl>
+            </td>
+            <td className="hidden px-3 py-4 text-sm lg:table-cell">
+              {encomenda.enco_total} €
+            </td>
+            <td className="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell">
+              <time> {encomenda.createdAt.slice(0, 10)}</time>
+            </td>
+            {encomenda.enco_estado === '1' ? (
+              <td className="hidden px-3 py-4 text-sm text-red-500 sm:table-cell">
+                Created
+              </td>
+            ) : encomenda.enco_estado === '2' ? (
+              <td className="hidden px-3 py-4 text-sm text-red-500 sm:table-cell">
+                Processing
+              </td>
+            ) : encomenda.enco_estado === '3' ? (
+              <td className="hidden px-3 py-4 text-sm text-yellow-500 sm:table-cell">
+                Sent
+              </td>
+            ) : (
+              <td className="hidden px-3 py-4 text-sm text-green-500 sm:table-cell">
+                Delivered
+              </td>
+            )}
+
+            <td className="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+              <Link
+                to={`/eachorder/${encomenda._id}`}
+                className="text-blue-600 hover:text-blue-900"
+              >
+                Details
+              </Link>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }

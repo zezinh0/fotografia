@@ -8,9 +8,15 @@ const gruposRouter = express.Router();
 gruposRouter.get(
   '/:user_id',
   asyncHandler(async (req, res) => {
-    const grupos = await Grupo.find({ user_id: req.params.user_id });
-    if (grupos) {
-      res.send(grupos);
+    let count = req.query.page * req.query.limit;
+    let total = await Grupo.find({ user_id: req.params.user_id }).count();
+    const grupos = await Grupo.find({ user_id: req.params.user_id })
+      .skip(count)
+      .limit(req.query.limit);
+
+    const send = { total: total, grupos: grupos };
+    if (send) {
+      res.send(send);
     } else {
       res.status(404).send({ message: 'Não tem Grupos Criados' });
     }
@@ -21,31 +27,46 @@ gruposRouter.get(
   '/grupo/:id',
   asyncHandler(async (req, res) => {
     const grupo = await Grupo.find({ _id: req.params.id });
-    if (grupo) {
-      let array = [];
-      let data = grupo[0].grupo_medidas.split(',');
-      for (let i = 0; i < data.length - 1; i++) {
-        array.push({
-          largura: data[i].split('-')[0],
-          altura: data[i].split('-')[1],
-          price: data[i].split('-')[2],
-          id: data[i].split('-')[3],
-        });
-      }
-      let enviar = {
-        _id: grupo[0]._id,
-        createdAt: grupo[0].createdAt,
-        grupo_codigo: grupo[0].grupo_codigo,
-        grupo_medidas: array,
-        grupo_name: grupo[0].grupo_name,
-        grupo_privado: grupo[0].grupo_privado,
-        updatedAt: grupo[0].updatedAt,
-        user_id: grupo[0].user_id,
-      };
 
-      res.send(enviar);
+    if (grupo) {
+      res.status(200).send({ data: grupo, message: 'Group Exist' });
     } else {
-      res.status(404).send({ message: 'Não tem o Grupo' });
+      res.status(404).send({ message: 'Group Not Exist' });
+    }
+  })
+);
+
+gruposRouter.get(
+  '/grupo/discount/:id',
+  asyncHandler(async (req, res) => {
+    console.log('UUUUII TUDO OK');
+    const grupo = await Grupo.find({ _id: req.params.id });
+
+    const existItem = grupo[0].grupo_discount.find(
+      (item) => item.name === req.query.discount
+    );
+
+    console.log(req.query.discount);
+    console.log(existItem);
+    if (existItem) {
+      res.status(200).send({ data: existItem, message: 'Group Exist' });
+    } else {
+      res.status(404).send({ message: 'Group Not Exist' });
+    }
+  })
+);
+gruposRouter.get(
+  '/grupo/delivery/:id',
+  asyncHandler(async (req, res) => {
+    console.log('UUUUII TUDO OK');
+    const delivery = await Grupo.find({ _id: req.params.id });
+
+    if (delivery) {
+      res
+        .status(200)
+        .send({ data: delivery[0].grupo_delivery, message: 'Delivery Exist' });
+    } else {
+      res.status(404).send({ message: 'Delivery Not Exist' });
     }
   })
 );
@@ -53,18 +74,15 @@ gruposRouter.get(
 gruposRouter.post(
   '/create/:user_id',
   asyncHandler(async (req, res) => {
-    const grupo = await Grupo.create({
-      user_id: req.params.user_id,
-      grupo_name: req.body.nome,
-      grupo_codigo: req.body.codigo,
-      grupo_privado: req.body.enabled,
-      grupo_medidas: req.body.tamanho,
-    });
+    console.log(req.body);
+    const neww = JSON.parse(req.body.send);
+
+    const grupo = await Grupo.create(neww);
 
     if (grupo) {
-      res.send(grupo);
+      res.status(200).send({ data: grupo, message: 'Group Created' });
     } else {
-      res.status(404).send({ message: 'Não tem Grupo Criado' });
+      res.status(404).send({ message: 'Group Not Created' });
     }
   })
 );
@@ -72,19 +90,12 @@ gruposRouter.post(
 gruposRouter.put(
   '/update/:_id',
   asyncHandler(async (req, res) => {
-    console.log('okokokokokokok');
-    const grupo = await Grupo.updateOne(
-      { _id: req.params._id },
-      {
-        grupo_name: req.body.nome,
-        grupo_privado: req.body.enabled,
-        grupo_medidas: req.body.tamanho,
-      }
-    );
+    const neww = JSON.parse(req.body.send);
+
+    const grupo = await Grupo.updateOne({ _id: req.params._id }, neww);
 
     if (grupo) {
-      console.log(grupo);
-      res.send(grupo.data + '- O Grupo foi Update');
+      res.status(200).send({ data: grupo, message: 'Group Changed' });
     } else {
       res.status(404).send({ message: 'Não tem Grupo Criado' });
     }
