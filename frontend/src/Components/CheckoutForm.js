@@ -100,7 +100,7 @@ export default function CheckoutForm(props) {
       console.log(cardElement);
       const { error: stripeError, paymentIntent } =
         await stripe.confirmCardPayment(result.data.clientSecret, {
-          receipt_email: 'ze_manuel_costa1998@hotmail.com',
+          receipt_email: '',
           payment_method: {
             card: cardElement,
             billing_details: {
